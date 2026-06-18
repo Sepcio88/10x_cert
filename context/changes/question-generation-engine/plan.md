@@ -273,8 +273,8 @@ No data migrations. Adds one optional env secret (`OPENROUTER_API_KEY`); the app
 
 #### Automated
 
-- [x] 1.1 Type checking passes: `npm run lint`
-- [x] 1.2 Production build succeeds without the key set: `npm run build`
+- [x] 1.1 Type checking passes: `npm run lint` — a4ca4cc
+- [x] 1.2 Production build succeeds without the key set: `npm run build` — a4ca4cc
 
 #### Manual
 
@@ -284,8 +284,8 @@ No data migrations. Adds one optional env secret (`OPENROUTER_API_KEY`); the app
 
 #### Automated
 
-- [x] 2.1 Type checking passes: `npm run lint`
-- [x] 2.2 Production build succeeds: `npm run build`
+- [x] 2.1 Type checking passes: `npm run lint` — a4ca4cc
+- [x] 2.2 Production build succeeds: `npm run build` — a4ca4cc
 
 #### Manual
 
@@ -296,9 +296,9 @@ No data migrations. Adds one optional env secret (`OPENROUTER_API_KEY`); the app
 
 #### Automated
 
-- [x] 3.1 Test suite passes: `npm run test`
-- [x] 3.2 Type checking passes: `npm run lint`
-- [x] 3.3 CI lint+build still pass: `npm run build`
+- [x] 3.1 Test suite passes: `npm run test` — a4ca4cc
+- [x] 3.2 Type checking passes: `npm run lint` — a4ca4cc
+- [x] 3.3 CI lint+build still pass: `npm run build` — a4ca4cc
 
 #### Manual
 
@@ -308,9 +308,9 @@ No data migrations. Adds one optional env secret (`OPENROUTER_API_KEY`); the app
 
 #### Automated
 
-- [x] 4.1 Type checking passes: `npm run lint`
-- [x] 4.2 Production build succeeds: `npm run build`
-- [x] 4.3 Existing unit suite still passes: `npm run test`
+- [x] 4.1 Type checking passes: `npm run lint` — a4ca4cc
+- [x] 4.2 Production build succeeds: `npm run build` — a4ca4cc
+- [x] 4.3 Existing unit suite still passes: `npm run test` — a4ca4cc
 
 #### Manual
 

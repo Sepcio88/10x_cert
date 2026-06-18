@@ -2,7 +2,7 @@
 change_id: question-generation-engine
 roadmap_id: F-01
 title: Question-generation engine
-status: implementing
+status: implemented
 created: 2026-06-18
 updated: 2026-06-18
 ---
