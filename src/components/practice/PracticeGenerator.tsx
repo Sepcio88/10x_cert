@@ -9,6 +9,7 @@ import {
   correctCount,
   createSession,
   currentQuestion,
+  getAnswer,
   isComplete,
   isCurrentAnswered,
   score,
@@ -103,6 +104,7 @@ export default function PracticeGenerator() {
     setStatus("idle");
     setErrorMessage(null);
     setShowReview(false);
+    setConfidence("high");
   }
 
   // === Answering mode ===
@@ -131,6 +133,7 @@ export default function PracticeGenerator() {
           index={session.currentIndex}
           selectedOptionId={selectedOptionId}
           answered={answered}
+          correct={getAnswer(session, session.currentIndex)?.correct}
           onSelect={setSelectedOptionId}
           onSubmit={handleSubmitAnswer}
         />

@@ -10,6 +10,8 @@ interface Props {
   selectedOptionId: string | null;
   /** True once the answer is submitted: options lock, highlighting + feedback appear. */
   answered: boolean;
+  /** The graded verdict from the session (`AnswerRecord.correct`). Source of truth for the badge once answered. */
+  correct?: boolean;
   /** Pick an option. Ignored once `answered`. */
   onSelect?: (optionId: string) => void;
   /** Commit the selected option for grading. Shown only while unanswered. */
@@ -22,8 +24,9 @@ interface Props {
  * correct option (and a wrong pick), and leads with the explanation (FR-007).
  * Reused read-only (answered, no callbacks) by the Phase 3 review.
  */
-export function QuestionCard({ question, index, selectedOptionId, answered, onSelect, onSubmit }: Props) {
-  const isCorrect = answered && selectedOptionId === question.correctOptionId;
+export function QuestionCard({ question, index, selectedOptionId, answered, correct, onSelect, onSubmit }: Props) {
+  // Verdict reads the graded record when provided; falls back to deriving it so the card stays self-contained.
+  const isCorrect = answered && (correct ?? selectedOptionId === question.correctOptionId);
 
   return (
     <div className="rounded-xl border border-white/10 bg-white/5 p-4 text-left text-white">

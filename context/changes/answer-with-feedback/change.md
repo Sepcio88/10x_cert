@@ -1,7 +1,7 @@
 ---
 id: answer-with-feedback
 roadmap_ref: S-02
-status: implemented
+status: impl_reviewed
 created: 2026-06-18
 updated: 2026-06-18
 prd_refs: [US-01, FR-006, FR-007, FR-008]

@@ -14,6 +14,8 @@ interface Props {
  * reusing the answered `QuestionCard`. Rows are independent and collapsed by default.
  */
 export function SessionReview({ session }: Props) {
+  // Expanded rows tracked by index: the session is complete here, so `questions` is
+  // frozen (no reorder/insert) and index↔id stay in lockstep for the review's lifetime.
   const [open, setOpen] = useState<Set<number>>(() => new Set());
 
   function toggle(index: number) {
@@ -62,6 +64,7 @@ export function SessionReview({ session }: Props) {
                   index={index}
                   selectedOptionId={answer?.selectedOptionId ?? null}
                   answered
+                  correct={answer?.correct}
                 />
               </div>
             )}
