@@ -12,11 +12,14 @@ export const prerender = false;
  * Usage (dev): GET /api/dev/generate?exam=AWS%20SAA-C03&count=10
  */
 export const GET: APIRoute = async (context) => {
-  if (import.meta.env.PROD) {
+  const url = new URL(context.request.url);
+  const isLocalhost = url.hostname === "localhost" || url.hostname === "127.0.0.1";
+  // Defense in depth: never in a production build, and only reachable from a local host
+  // (blocks preview/public deploys where PROD may be false from burning LLM credits).
+  if (import.meta.env.PROD || !isLocalhost) {
     return new Response("Not found", { status: 404 });
   }
 
-  const url = new URL(context.request.url);
   const exam = url.searchParams.get("exam") ?? "";
   const count = Number(url.searchParams.get("count") ?? "10");
 
