@@ -313,13 +313,13 @@ None — no schema or data changes (persistence is S-03).
 
 #### Automated
 
-- [x] 3.1 Type checking passes
-- [x] 3.2 Linting passes
-- [x] 3.3 Full test suite passes
+- [x] 3.1 Type checking passes — 9b55d8f
+- [x] 3.2 Linting passes — 9b55d8f
+- [x] 3.3 Full test suite passes — 9b55d8f
 
 #### Manual
 
-- [x] 3.4 Summary shows correct overall score + percentage
-- [x] 3.5 "New practice set" returns to a clean generator form
-- [x] 3.6 "Review answers" shows collapsed rows expanding to per-question feedback
-- [x] 3.7 Refresh mid-session restarts at the generator (in-memory, expected)
+- [x] 3.4 Summary shows correct overall score + percentage — 9b55d8f
+- [x] 3.5 "New practice set" returns to a clean generator form — 9b55d8f
+- [x] 3.6 "Review answers" shows collapsed rows expanding to per-question feedback — 9b55d8f
+- [x] 3.7 Refresh mid-session restarts at the generator (in-memory, expected) — 9b55d8f
