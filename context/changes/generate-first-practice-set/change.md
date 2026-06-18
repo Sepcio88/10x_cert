@@ -2,7 +2,7 @@
 change_id: generate-first-practice-set
 roadmap_id: S-01
 title: Generate a practice set for a chosen exam (north star)
-status: implementing
+status: implemented
 created: 2026-06-18
 updated: 2026-06-18
 ---

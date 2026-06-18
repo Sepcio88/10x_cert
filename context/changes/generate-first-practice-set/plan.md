@@ -247,9 +247,9 @@ No data migrations. No new dependencies expected (zod already present from F-01;
 
 #### Automated
 
-- [x] 3.1 Type checking passes: `npm run lint`
-- [x] 3.2 Production build succeeds: `npm run build`
-- [x] 3.3 Unit suite still passes: `npm run test`
+- [x] 3.1 Type checking passes: `npm run lint` — 9b61a45
+- [x] 3.2 Production build succeeds: `npm run build` — 9b61a45
+- [x] 3.3 Unit suite still passes: `npm run test` — 9b61a45
 
 #### Manual
 
