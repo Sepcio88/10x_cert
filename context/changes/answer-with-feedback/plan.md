@@ -284,30 +284,30 @@ None — no schema or data changes (persistence is S-03).
 
 #### Automated
 
-- [x] 1.1 Type checking passes (build / typecheck script)
-- [x] 1.2 Linting passes (`npm run lint`)
-- [x] 1.3 Session unit tests pass (`npx vitest run src/lib/practice/session.test.ts`)
-- [x] 1.4 Full test suite passes (`npx vitest run`)
+- [x] 1.1 Type checking passes (build / typecheck script) — d2f9fca
+- [x] 1.2 Linting passes (`npm run lint`) — d2f9fca
+- [x] 1.3 Session unit tests pass (`npx vitest run src/lib/practice/session.test.ts`) — d2f9fca
+- [x] 1.4 Full test suite passes (`npx vitest run`) — d2f9fca
 
 #### Manual
 
-- [x] 1.5 Module has no React/DOM/`astro:env` imports (stays pure)
+- [x] 1.5 Module has no React/DOM/`astro:env` imports (stays pure) — d2f9fca
 
 ### Phase 2: Answering flow UI
 
 #### Automated
 
-- [ ] 2.1 Type checking passes
-- [ ] 2.2 Linting passes
-- [ ] 2.3 Full test suite passes
+- [x] 2.1 Type checking passes
+- [x] 2.2 Linting passes
+- [x] 2.3 Full test suite passes
 
 #### Manual
 
-- [ ] 2.4 Generating enters the answering flow; Submit disabled until an option is chosen
-- [ ] 2.5 After Submit: verdict shown, correct highlighted, wrong pick marked, explanation leads, answer locked
-- [ ] 2.6 Next advances; no Back/Skip; running correct count accurate
-- [ ] 2.7 Feedback appears within ~1s (no network round-trip)
-- [ ] 2.8 Low-confidence banner still appears for low-confidence sets
+- [x] 2.4 Generating enters the answering flow; Submit disabled until an option is chosen
+- [x] 2.5 After Submit: verdict shown, correct highlighted, wrong pick marked, explanation leads, answer locked
+- [x] 2.6 Next advances; no Back/Skip; running correct count accurate
+- [x] 2.7 Feedback appears within ~1s (no network round-trip)
+- [x] 2.8 Low-confidence banner still appears for low-confidence sets
 
 ### Phase 3: Summary + review
 

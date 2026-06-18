@@ -1,9 +1,19 @@
 import { useState } from "react";
-import { Sparkles, RotateCcw } from "lucide-react";
+import { Sparkles, RotateCcw, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ServerError } from "@/components/auth/ServerError";
 import { QuestionCard } from "@/components/practice/QuestionCard";
-import type { Question, GenerationConfidence } from "@/types";
+import {
+  advance,
+  correctCount,
+  createSession,
+  currentQuestion,
+  isComplete,
+  isCurrentAnswered,
+  score,
+  submitAnswer,
+} from "@/lib/practice/session";
+import type { PracticeSession, Question, GenerationConfidence } from "@/types";
 
 const PROVIDERS = ["AWS", "Azure", "GCP"] as const;
 type Provider = (typeof PROVIDERS)[number];
@@ -25,7 +35,8 @@ type ApiResponse =
   | { ok: true; questions: Question[]; confidence: GenerationConfidence }
   | { ok: false; error: { code: string; message: string } };
 
-type Status = "idle" | "loading" | "done" | "error";
+// Mode machine: form (idle/loading/error) → answering → summary.
+type Status = "idle" | "loading" | "answering" | "summary" | "error";
 
 const inputClass =
   "w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-white placeholder:text-blue-100/40 focus:border-purple-400 focus:outline-none";
@@ -35,7 +46,8 @@ export default function PracticeGenerator() {
   const [exam, setExam] = useState("");
   const [count, setCount] = useState(5);
   const [status, setStatus] = useState<Status>("idle");
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [session, setSession] = useState<PracticeSession | null>(null);
+  const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [confidence, setConfidence] = useState<GenerationConfidence>("high");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -53,9 +65,10 @@ export default function PracticeGenerator() {
       });
       const data = (await res.json()) as ApiResponse;
       if (res.ok && data.ok) {
-        setQuestions(data.questions);
+        setSession(createSession(data.questions));
+        setSelectedOptionId(null);
         setConfidence(data.confidence);
-        setStatus("done");
+        setStatus("answering");
       } else {
         const code = !data.ok ? data.error.code : undefined;
         const fallback = !data.ok ? data.error.message : "Something went wrong. Please try again.";
@@ -69,6 +82,95 @@ export default function PracticeGenerator() {
     }
   }
 
+  function handleSubmitAnswer() {
+    if (session === null || selectedOptionId === null || isCurrentAnswered(session)) return;
+    setSession(submitAnswer(session, selectedOptionId));
+  }
+
+  function handleNext() {
+    if (session === null) return;
+    const next = advance(session);
+    setSession(next);
+    setSelectedOptionId(null);
+    if (isComplete(next)) setStatus("summary");
+  }
+
+  function startNewSet() {
+    setSession(null);
+    setSelectedOptionId(null);
+    setStatus("idle");
+    setErrorMessage(null);
+  }
+
+  // === Answering mode ===
+  if (status === "answering" && session !== null) {
+    const question = currentQuestion(session);
+    if (question === null) return null;
+    const answered = isCurrentAnswered(session);
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between text-sm text-blue-100/80">
+          <span>
+            Question {session.currentIndex + 1} of {session.questions.length}
+          </span>
+          <span>{correctCount(session)} correct so far</span>
+        </div>
+
+        {confidence === "low" && (
+          <p className="rounded-lg border border-amber-500/30 bg-amber-900/30 px-3 py-2 text-sm text-amber-200">
+            These questions may be less accurate — the exam wasn&apos;t clearly recognized. Double-check the exam code
+            or name.
+          </p>
+        )}
+
+        <QuestionCard
+          question={question}
+          index={session.currentIndex}
+          selectedOptionId={selectedOptionId}
+          answered={answered}
+          onSelect={setSelectedOptionId}
+          onSubmit={handleSubmitAnswer}
+        />
+
+        {answered && (
+          <Button
+            type="button"
+            onClick={handleNext}
+            className="flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 font-medium text-white hover:bg-purple-500"
+          >
+            {session.currentIndex + 1 < session.questions.length ? "Next question" : "See results"}
+            <ArrowRight className="size-4" />
+          </Button>
+        )}
+      </div>
+    );
+  }
+
+  // === Summary mode (minimal in Phase 2; enriched with review in Phase 3) ===
+  if (status === "summary" && session !== null) {
+    const result = score(session);
+    return (
+      <div className="space-y-4 text-white">
+        <div className="rounded-xl border border-white/10 bg-white/5 p-6 text-center">
+          <p className="text-sm text-blue-100/70">Session complete</p>
+          <p className="mt-1 text-3xl font-bold">
+            {result.correct} / {result.total} correct
+          </p>
+          <p className="text-blue-100/80">{result.percentage}%</p>
+        </div>
+        <Button
+          type="button"
+          onClick={startNewSet}
+          className="flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 font-medium text-white hover:bg-purple-500"
+        >
+          <Sparkles className="size-4" />
+          New practice set
+        </Button>
+      </div>
+    );
+  }
+
+  // === Form mode (idle / loading / error) ===
   return (
     <div className="space-y-6">
       <form
@@ -164,20 +266,6 @@ export default function PracticeGenerator() {
             <RotateCcw className="size-4" />
             Retry
           </Button>
-        </div>
-      )}
-
-      {status === "done" && (
-        <div className="space-y-3">
-          {confidence === "low" && (
-            <p className="rounded-lg border border-amber-500/30 bg-amber-900/30 px-3 py-2 text-sm text-amber-200">
-              These questions may be less accurate — the exam wasn&apos;t clearly recognized. Double-check the exam code
-              or name.
-            </p>
-          )}
-          {questions.map((question, index) => (
-            <QuestionCard key={question.id} question={question} index={index} />
-          ))}
         </div>
       )}
     </div>
