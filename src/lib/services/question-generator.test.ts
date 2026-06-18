@@ -53,7 +53,7 @@ describe("generateQuestions", () => {
   });
 
   it("rejects count above the cap before calling the provider", async () => {
-    const result = await generateQuestions({ exam: "AWS SAA-C03", count: 21 });
+    const result = await generateQuestions({ exam: "AWS SAA-C03", count: 6 });
 
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.error.code).toBe("invalid-count");

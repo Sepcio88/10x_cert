@@ -23,7 +23,7 @@ function ctx({ user, body }: { user: unknown; body: unknown }): Ctx {
   } as unknown as Ctx;
 }
 
-const validBody = { provider: "AWS", exam: "SAA-C03", count: 10 };
+const validBody = { provider: "AWS", exam: "SAA-C03", count: 5 };
 const okResult = { ok: true, questions: [], confidence: "high" };
 
 beforeEach(() => {
@@ -45,7 +45,7 @@ describe("POST /api/practice/generate", () => {
   });
 
   it("returns 400 on an out-of-range count without calling the engine", async () => {
-    for (const count of [0, 21]) {
+    for (const count of [0, 6]) {
       generateMock.mockClear();
       const res = await POST(ctx({ user: { id: "u1" }, body: { ...validBody, count } }));
       expect(res.status).toBe(400);
@@ -67,7 +67,7 @@ describe("POST /api/practice/generate", () => {
 
   it("composes the exam identifier from provider + exam and returns the engine result", async () => {
     const res = await POST(ctx({ user: { id: "u1" }, body: validBody }));
-    expect(generateMock).toHaveBeenCalledWith({ exam: "AWS SAA-C03", count: 10 });
+    expect(generateMock).toHaveBeenCalledWith({ exam: "AWS SAA-C03", count: 5 });
     expect(res.status).toBe(200);
     const data = (await res.json()) as { ok: boolean };
     expect(data.ok).toBe(true);

@@ -1,8 +1,13 @@
 import { z } from "zod";
 
-/** Hard bounds on questions per generation request (protects the <10s latency budget). */
+/**
+ * Hard bounds on questions per generation request (protects the <10s latency budget).
+ * Cap lowered from 20 to 5 for the MVP: a single synchronous gpt-4o-mini call for
+ * ~10 questions exceeds the 9s timeout, so 5 keeps generation comfortably under budget.
+ * Raising it again needs a faster model or streaming (see F-01 follow-up).
+ */
 export const MIN_QUESTION_COUNT = 1;
-export const MAX_QUESTION_COUNT = 20;
+export const MAX_QUESTION_COUNT = 5;
 
 export const questionOptionSchema = z.object({
   id: z.string().min(1),

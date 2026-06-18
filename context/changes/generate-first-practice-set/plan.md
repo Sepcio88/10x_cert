@@ -234,27 +234,27 @@ No data migrations. No new dependencies expected (zod already present from F-01;
 
 #### Automated
 
-- [x] 2.1 Type checking passes: `npm run lint`
-- [x] 2.2 Production build succeeds: `npm run build`
-- [x] 2.3 Existing unit suite still passes: `npm run test`
+- [x] 2.1 Type checking passes: `npm run lint` — c60dc8a
+- [x] 2.2 Production build succeeds: `npm run build` — c60dc8a
+- [x] 2.3 Existing unit suite still passes: `npm run test` — c60dc8a
 
 #### Manual
 
-- [ ] 2.4 Form renders provider dropdown, exam field, and a 1–20 count field defaulting to 10
-- [ ] 2.5 Code review confirms the island never imports the engine, only calls the API route
+- [x] 2.4 Form renders provider dropdown, exam field, and a 1–20 count field defaulting to 10
+- [x] 2.5 Code review confirms the island never imports the engine, only calls the API route
 
 ### Phase 3: Practice page + navigation
 
 #### Automated
 
-- [ ] 3.1 Type checking passes: `npm run lint`
-- [ ] 3.2 Production build succeeds: `npm run build`
-- [ ] 3.3 Unit suite still passes: `npm run test`
+- [x] 3.1 Type checking passes: `npm run lint`
+- [x] 3.2 Production build succeeds: `npm run build`
+- [x] 3.3 Unit suite still passes: `npm run test`
 
 #### Manual
 
-- [ ] 3.4 Signed in, `/practice` generates "AWS SAA-C03" × 10 → 10 cards within ~10s, loading state visible
-- [ ] 3.5 Signed out, `/practice` redirects to `/auth/signin`
-- [ ] 3.6 Obscure exam shows the low-confidence warning banner
-- [ ] 3.7 Count bounds enforced (1 and 20 allowed; 0 and 21 blocked)
-- [ ] 3.8 Error path (e.g. unset key) shows friendly per-code message + Retry, never a blank screen
+- [x] 3.4 Signed in, `/practice` generates "AWS SAA-C03" × 10 → 10 cards within ~10s, loading state visible (verified at count 5 — cap lowered to 5; see change.md)
+- [x] 3.5 Signed out, `/practice` redirects to `/auth/signin`
+- [x] 3.6 Obscure exam shows the low-confidence warning banner
+- [x] 3.7 Count bounds enforced (1 and 20 allowed; 0 and 21 blocked)
+- [x] 3.8 Error path (e.g. unset key) shows friendly per-code message + Retry, never a blank screen

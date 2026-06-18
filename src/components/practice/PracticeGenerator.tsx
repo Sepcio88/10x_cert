@@ -10,7 +10,7 @@ type Provider = (typeof PROVIDERS)[number];
 
 // Mirrors the engine cap (MAX_QUESTION_COUNT) so the client rejects out-of-range before calling.
 const MIN_COUNT = 1;
-const MAX_COUNT = 20;
+const MAX_COUNT = 5;
 
 const ERROR_MESSAGES: Record<string, string> = {
   "not-configured": "AI generation isn't set up yet — an OpenRouter API key is required.",
@@ -33,7 +33,7 @@ const inputClass =
 export default function PracticeGenerator() {
   const [provider, setProvider] = useState<Provider>("AWS");
   const [exam, setExam] = useState("");
-  const [count, setCount] = useState(10);
+  const [count, setCount] = useState(5);
   const [status, setStatus] = useState<Status>("idle");
   const [questions, setQuestions] = useState<Question[]>([]);
   const [confidence, setConfidence] = useState<GenerationConfidence>("high");
