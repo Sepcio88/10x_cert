@@ -31,7 +31,7 @@ Cloud developers studying for a certification exam waste time hunting for scatte
 | ---- | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------- | -------------------------------------------------- | -------- |
 | F-01 | question-generation-engine  | (foundation) a generation call returns exam-relevant questions with correct answer, explanation, and topic, within guardrails | —             | FR-005, NFR (gen <10s), Guardrail: answer accuracy | done     |
 | S-01 | generate-first-practice-set | select a provider, find an exam by code/name, choose a count, and get a generated question set                                | F-01          | US-01, FR-001, FR-002, FR-003, FR-004, FR-005      | done     |
-| S-02 | answer-with-feedback        | answer the set one-by-one with immediate explanation-first feedback and an overall score                                      | S-01          | US-01, FR-006, FR-007, FR-008                      | proposed |
+| S-02 | answer-with-feedback        | answer the set one-by-one with immediate explanation-first feedback and an overall score                                      | S-01          | US-01, FR-006, FR-007, FR-008                      | done     |
 | S-03 | session-persistence-history | finish a session that is saved, and revisit past sessions                                                                     | S-02          | FR-008, FR-009                                     | proposed |
 | S-04 | progress-dashboard          | see a per-topic breakdown and a progress trend across sessions                                                                | S-03          | FR-008, FR-010                                     | blocked  |
 | S-05 | retry-weak-topics           | start a fresh set targeting topics previously answered wrong                                                                  | F-01, S-03    | FR-011                                             | proposed |
@@ -98,7 +98,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Proves the second half of the bet — explanation-first teaching, not answer-recall. Sequenced after S-01 because it consumes a generated set; low risk once generation is trustworthy.
-- **Status:** proposed
+- **Status:** done
 
 ### S-03: Persist completed sessions and revisit history
 
@@ -167,3 +167,4 @@ This table is the clean handoff to Jira/Linear or any MCP-backed backlog. One ro
 
 - **F-01: (foundation) a single generation call accepts an exam + count and returns exam-relevant questions, each with a designated correct answer, an explanation, and a topic/domain tag — meeting the accuracy and latency guardrails. Not user-visible on its own.** — Archived 2026-06-18 → `context/archive/2026-06-18-question-generation-engine/`. Lesson: —.
 - **S-01: user can select a cloud provider, find an exam by its code or name, choose how many questions, and get a freshly generated question set for that exam.** — Archived 2026-06-18 → `context/archive/2026-06-18-generate-first-practice-set/`. Lesson: [[lessons.md]] (LLM latency vs output volume; count cap lowered 20→5).
+- **S-02: user can answer the generated questions one at a time, see immediately whether each was correct with an explanation-first rationale and the correct answer, and finish with an overall session score.** — Archived 2026-06-18 → `context/archive/2026-06-18-answer-with-feedback/`. Lesson: —.

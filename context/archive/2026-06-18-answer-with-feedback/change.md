@@ -1,9 +1,10 @@
 ---
 id: answer-with-feedback
 roadmap_ref: S-02
-status: impl_reviewed
+status: archived
 created: 2026-06-18
 updated: 2026-06-18
+archived_at: 2026-06-18T16:20:58Z
 prd_refs: [US-01, FR-006, FR-007, FR-008]
 prerequisites: [generate-first-practice-set]
 ---
