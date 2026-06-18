@@ -297,29 +297,29 @@ None — no schema or data changes (persistence is S-03).
 
 #### Automated
 
-- [x] 2.1 Type checking passes
-- [x] 2.2 Linting passes
-- [x] 2.3 Full test suite passes
+- [x] 2.1 Type checking passes — 4dc36ca
+- [x] 2.2 Linting passes — 4dc36ca
+- [x] 2.3 Full test suite passes — 4dc36ca
 
 #### Manual
 
-- [x] 2.4 Generating enters the answering flow; Submit disabled until an option is chosen
-- [x] 2.5 After Submit: verdict shown, correct highlighted, wrong pick marked, explanation leads, answer locked
-- [x] 2.6 Next advances; no Back/Skip; running correct count accurate
-- [x] 2.7 Feedback appears within ~1s (no network round-trip)
-- [x] 2.8 Low-confidence banner still appears for low-confidence sets
+- [x] 2.4 Generating enters the answering flow; Submit disabled until an option is chosen — 4dc36ca
+- [x] 2.5 After Submit: verdict shown, correct highlighted, wrong pick marked, explanation leads, answer locked — 4dc36ca
+- [x] 2.6 Next advances; no Back/Skip; running correct count accurate — 4dc36ca
+- [x] 2.7 Feedback appears within ~1s (no network round-trip) — 4dc36ca
+- [x] 2.8 Low-confidence banner still appears for low-confidence sets — 4dc36ca
 
 ### Phase 3: Summary + review
 
 #### Automated
 
-- [ ] 3.1 Type checking passes
-- [ ] 3.2 Linting passes
-- [ ] 3.3 Full test suite passes
+- [x] 3.1 Type checking passes
+- [x] 3.2 Linting passes
+- [x] 3.3 Full test suite passes
 
 #### Manual
 
-- [ ] 3.4 Summary shows correct overall score + percentage
-- [ ] 3.5 "New practice set" returns to a clean generator form
-- [ ] 3.6 "Review answers" shows collapsed rows expanding to per-question feedback
-- [ ] 3.7 Refresh mid-session restarts at the generator (in-memory, expected)
+- [x] 3.4 Summary shows correct overall score + percentage
+- [x] 3.5 "New practice set" returns to a clean generator form
+- [x] 3.6 "Review answers" shows collapsed rows expanding to per-question feedback
+- [x] 3.7 Refresh mid-session restarts at the generator (in-memory, expected)

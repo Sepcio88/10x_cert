@@ -3,6 +3,7 @@ import { Sparkles, RotateCcw, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ServerError } from "@/components/auth/ServerError";
 import { QuestionCard } from "@/components/practice/QuestionCard";
+import { SessionReview } from "@/components/practice/SessionReview";
 import {
   advance,
   correctCount,
@@ -50,6 +51,7 @@ export default function PracticeGenerator() {
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [confidence, setConfidence] = useState<GenerationConfidence>("high");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [showReview, setShowReview] = useState(false);
 
   const loading = status === "loading";
   const canSubmit = !loading && exam.trim() !== "" && count >= MIN_COUNT && count <= MAX_COUNT;
@@ -100,6 +102,7 @@ export default function PracticeGenerator() {
     setSelectedOptionId(null);
     setStatus("idle");
     setErrorMessage(null);
+    setShowReview(false);
   }
 
   // === Answering mode ===
@@ -146,7 +149,7 @@ export default function PracticeGenerator() {
     );
   }
 
-  // === Summary mode (minimal in Phase 2; enriched with review in Phase 3) ===
+  // === Summary mode ===
   if (status === "summary" && session !== null) {
     const result = score(session);
     return (
@@ -158,14 +161,30 @@ export default function PracticeGenerator() {
           </p>
           <p className="text-blue-100/80">{result.percentage}%</p>
         </div>
-        <Button
-          type="button"
-          onClick={startNewSet}
-          className="flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 font-medium text-white hover:bg-purple-500"
-        >
-          <Sparkles className="size-4" />
-          New practice set
-        </Button>
+
+        <div className="flex flex-wrap gap-3">
+          <Button
+            type="button"
+            onClick={startNewSet}
+            className="flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 font-medium text-white hover:bg-purple-500"
+          >
+            <Sparkles className="size-4" />
+            New practice set
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => {
+              setShowReview((prev) => !prev);
+            }}
+            aria-expanded={showReview}
+            className="flex items-center gap-2 text-white"
+          >
+            {showReview ? "Hide review" : "Review answers"}
+          </Button>
+        </div>
+
+        {showReview && <SessionReview session={session} />}
       </div>
     );
   }
