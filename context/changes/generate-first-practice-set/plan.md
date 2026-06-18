@@ -222,21 +222,21 @@ No data migrations. No new dependencies expected (zod already present from F-01;
 
 #### Automated
 
-- [x] 1.1 Type checking passes: `npm run lint`
-- [x] 1.2 Unit tests pass: `npm run test`
-- [x] 1.3 Production build succeeds: `npm run build`
+- [x] 1.1 Type checking passes: `npm run lint` — 3d4c8d2
+- [x] 1.2 Unit tests pass: `npm run test` — 3d4c8d2
+- [x] 1.3 Production build succeeds: `npm run build` — 3d4c8d2
 
 #### Manual
 
-- [x] 1.4 Unauthenticated request to `/api/practice/generate` returns 401
+- [x] 1.4 Unauthenticated request to `/api/practice/generate` returns 401 — 3d4c8d2
 
 ### Phase 2: Practice React island
 
 #### Automated
 
-- [ ] 2.1 Type checking passes: `npm run lint`
-- [ ] 2.2 Production build succeeds: `npm run build`
-- [ ] 2.3 Existing unit suite still passes: `npm run test`
+- [x] 2.1 Type checking passes: `npm run lint`
+- [x] 2.2 Production build succeeds: `npm run build`
+- [x] 2.3 Existing unit suite still passes: `npm run test`
 
 #### Manual
 
