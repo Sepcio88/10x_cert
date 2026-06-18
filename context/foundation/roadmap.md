@@ -3,7 +3,7 @@ project: "CloudExamMatter"
 version: 1
 status: draft
 created: 2026-06-17
-updated: 2026-06-17
+updated: 2026-06-18
 prd_version: 1
 main_goal: market-feedback
 top_blocker: time
@@ -29,7 +29,7 @@ Cloud developers studying for a certification exam waste time hunting for scatte
 
 | ID   | Change ID                   | Outcome (user can …)                                                                                                          | Prerequisites | PRD refs                                           | Status   |
 | ---- | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------- | -------------------------------------------------- | -------- |
-| F-01 | question-generation-engine  | (foundation) a generation call returns exam-relevant questions with correct answer, explanation, and topic, within guardrails | —             | FR-005, NFR (gen <10s), Guardrail: answer accuracy | ready    |
+| F-01 | question-generation-engine  | (foundation) a generation call returns exam-relevant questions with correct answer, explanation, and topic, within guardrails | —             | FR-005, NFR (gen <10s), Guardrail: answer accuracy | done     |
 | S-01 | generate-first-practice-set | select a provider, find an exam by code/name, choose a count, and get a generated question set                                | F-01          | US-01, FR-001, FR-002, FR-003, FR-004, FR-005      | proposed |
 | S-02 | answer-with-feedback        | answer the set one-by-one with immediate explanation-first feedback and an overall score                                      | S-01          | US-01, FR-006, FR-007, FR-008                      | proposed |
 | S-03 | session-persistence-history | finish a session that is saved, and revisit past sessions                                                                     | S-02          | FR-008, FR-009                                     | proposed |
@@ -71,7 +71,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:**
   - Which LLM provider/approach guarantees the accuracy bar and the <10s latency target? — Owner: user/team. Block: no (resolvable during `/10x-plan` research; a spike confirms feasibility before S-01).
 - **Risk:** Sequenced first because it is the riskiest assumption — if generation can't produce accurate, exam-relevant questions within the latency budget, the whole product premise fails. Kept minimal (a working generation contract, not a full subsystem) so S-01 can integrate and exercise it through real user behavior immediately.
-- **Status:** ready
+- **Status:** done
 
 ## Slices
 
@@ -165,4 +165,4 @@ This table is the clean handoff to Jira/Linear or any MCP-backed backlog. One ro
 
 ## Done
 
-(Empty on first generation. `/10x-archive` appends here — and flips the item's `Status` to `done` — when a change whose `Change ID` matches a roadmap item is archived.)
+- **F-01: (foundation) a single generation call accepts an exam + count and returns exam-relevant questions, each with a designated correct answer, an explanation, and a topic/domain tag — meeting the accuracy and latency guardrails. Not user-visible on its own.** — Archived 2026-06-18 → `context/archive/2026-06-18-question-generation-engine/`. Lesson: —.

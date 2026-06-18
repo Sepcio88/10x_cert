@@ -2,9 +2,10 @@
 change_id: question-generation-engine
 roadmap_id: F-01
 title: Question-generation engine
-status: impl_reviewed
+status: archived
 created: 2026-06-18
 updated: 2026-06-18
+archived_at: 2026-06-18T09:59:28Z
 ---
 
 # Question-generation engine (F-01)
