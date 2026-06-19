@@ -1,7 +1,7 @@
 ---
 change_id: progress-dashboard
 title: Per-topic breakdown + per-exam progress dashboard (S-04)
-status: implemented
+status: impl_reviewed
 created: 2026-06-19
 updated: 2026-06-19
 archived_at: null

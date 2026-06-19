@@ -254,6 +254,17 @@ describe("topicBreakdown", () => {
     expect(breakdown).toEqual([{ topic: "Compute", correct: 2, total: 2, percentage: 100 }]);
   });
 
+  it("scores a multi-question topic answered all wrong as 0%", () => {
+    const breakdown = topicBreakdown(
+      sessionFrom([
+        { topic: "Security", correct: false },
+        { topic: "Security", correct: false },
+        { topic: "Security", correct: false },
+      ]),
+    );
+    expect(breakdown).toEqual([{ topic: "Security", correct: 0, total: 3, percentage: 0 }]);
+  });
+
   it("returns an empty array for a session with no questions", () => {
     expect(topicBreakdown({ questions: [], currentIndex: 0, answers: [] })).toEqual([]);
   });
