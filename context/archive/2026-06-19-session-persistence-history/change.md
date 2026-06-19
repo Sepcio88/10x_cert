@@ -1,10 +1,10 @@
 ---
 change_id: session-persistence-history
 title: Session persistence history
-status: impl_reviewed
+status: archived
 created: 2026-06-19
 updated: 2026-06-19
-archived_at: null
+archived_at: 2026-06-19T11:21:55Z
 ---
 
 ## Notes
