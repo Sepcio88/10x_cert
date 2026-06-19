@@ -1,6 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import Topbar from "@/components/Topbar.astro";
+import HistoryList from "@/components/practice/HistoryList";
 import { createClient } from "@/lib/supabase";
 import { listSessions } from "@/lib/db/sessions";
 
@@ -10,16 +11,6 @@ const { user } = Astro.locals;
 const supabase = createClient(Astro.request.headers, Astro.cookies);
 // Middleware guards /history, so `user` is present; guard anyway for types/config.
 const sessions = supabase && user ? await listSessions(supabase, user.id) : [];
-
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
 ---
 
 <Layout title="History">
@@ -31,46 +22,7 @@ function formatDate(iso: string): string {
           Your practice history
         </h1>
         <p class="mb-6 text-sm text-blue-100/70">Revisit a past session to review its questions and explanations.</p>
-
-        {
-          sessions.length === 0 ? (
-            <div class="rounded-xl border border-white/10 bg-white/5 p-6 text-center">
-              <p class="text-blue-100/80">No saved sessions yet.</p>
-              <a
-                href="/practice"
-                class="mt-4 inline-block rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium transition-colors hover:bg-purple-500"
-              >
-                Start practicing
-              </a>
-            </div>
-          ) : (
-            <ul class="space-y-2">
-              {sessions.map((s) => (
-                <li>
-                  <a
-                    href={`/history/${s.id}`}
-                    class="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3 transition-colors hover:border-purple-400/60"
-                  >
-                    <span class="min-w-0">
-                      <span class="block truncate font-medium text-white">
-                        {s.provider} — {s.exam}
-                      </span>
-                      <span class="block text-sm text-blue-100/60">
-                        {formatDate(s.createdAt)} · {s.total} question{s.total === 1 ? "" : "s"}
-                      </span>
-                    </span>
-                    <span class="shrink-0 text-right">
-                      <span class="block font-semibold text-white">
-                        {s.correct} / {s.total}
-                      </span>
-                      <span class="block text-sm text-blue-100/60">{s.percentage}%</span>
-                    </span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          )
-        }
+        <HistoryList sessions={sessions} client:load />
       </div>
     </div>
   </main>

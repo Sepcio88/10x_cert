@@ -487,27 +487,27 @@ inline error on failure. `history.astro` renders `<HistoryList sessions={…} />
 
 #### Automated
 
-- [x] 3.1 Lint passes: `npm run lint`
-- [x] 3.2 Build passes (both new routes compile): `npx astro sync && npm run build`
-- [x] 3.3 `npm test` stays green
+- [x] 3.1 Lint passes: `npm run lint` — 9c1b904
+- [x] 3.2 Build passes (both new routes compile): `npx astro sync && npm run build` — 9c1b904
+- [x] 3.3 `npm test` stays green — 9c1b904
 
 #### Manual
 
-- [x] 3.4 `/history` lists sessions with provider/exam, date, score, count, newest first
-- [x] 3.5 Fresh user sees the empty state
-- [x] 3.6 Row opens detail; `SessionReview` shows correctness + explanation-first (FR-009)
-- [x] 3.7 Signed-out `/history` redirects to `/auth/signin`
-- [x] 3.8 A second user cannot see/open the first user's sessions (detail URL 404s)
+- [x] 3.4 `/history` lists sessions with provider/exam, date, score, count, newest first — 9c1b904
+- [x] 3.5 Fresh user sees the empty state — 9c1b904
+- [x] 3.6 Row opens detail; `SessionReview` shows correctness + explanation-first (FR-009) — 9c1b904
+- [x] 3.7 Signed-out `/history` redirects to `/auth/signin` — 9c1b904
+- [x] 3.8 A second user cannot see/open the first user's sessions (detail URL 404s) — 9c1b904
 
 ### Phase 4: Delete a session
 
 #### Automated
 
-- [ ] 4.1 Delete endpoint tests pass: `npm test`
-- [ ] 4.2 Lint passes: `npm run lint`
-- [ ] 4.3 Build passes: `npx astro sync && npm run build`
+- [x] 4.1 Delete endpoint tests pass: `npm test`
+- [x] 4.2 Lint passes: `npm run lint`
+- [x] 4.3 Build passes: `npx astro sync && npm run build`
 
 #### Manual
 
-- [ ] 4.4 Delete prompts for confirmation, then removes the row from `/history` and the DB
-- [ ] 4.5 A user cannot delete another user's session (RLS no-op)
+- [x] 4.4 Delete prompts for confirmation, then removes the row from `/history` and the DB
+- [x] 4.5 A user cannot delete another user's session (RLS no-op)
