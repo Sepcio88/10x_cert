@@ -12,6 +12,12 @@ export default defineConfig({
   integrations: [react(), sitemap()],
   vite: {
     plugins: [tailwindcss()],
+    // Keep a single React/React-DOM copy in Vite's graph (standard Astro+React hygiene).
+    // NB: does not resolve the dev-only workerd SSR "null dispatcher" island error — see
+    // the known issue in context/changes/progress-dashboard/change.md.
+    resolve: {
+      dedupe: ["react", "react-dom"],
+    },
   },
   adapter: cloudflare(),
   env: {

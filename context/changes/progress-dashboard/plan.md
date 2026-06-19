@@ -273,28 +273,28 @@ and aggregation is in-memory over a handful of rows. No pagination needed.
 
 #### Automated
 
-- [x] 1.1 Unit tests pass: `npm test`
-- [x] 1.2 Lint passes: `npm run lint`
-- [x] 1.3 Build passes: `npx astro sync && npm run build`
+- [x] 1.1 Unit tests pass: `npm test` — 9627914
+- [x] 1.2 Lint passes: `npm run lint` — 9627914
+- [x] 1.3 Build passes: `npx astro sync && npm run build` — 9627914
 
 #### Manual
 
-- [x] 1.4 Per-topic bars show under the overall score on the summary
-- [x] 1.5 `/history/[id]` shows the same breakdown above the per-question review
-- [x] 1.6 Bars are color-coded and read correctly (correct/total, %)
+- [x] 1.4 Per-topic bars show under the overall score on the summary — 9627914
+- [x] 1.5 `/history/[id]` shows the same breakdown above the per-question review — 9627914
+- [x] 1.6 Bars are color-coded and read correctly (correct/total, %) — 9627914
 
 ### Phase 2: Per-exam progress dashboard (FR-010)
 
 #### Automated
 
-- [ ] 2.1 Unit tests pass: `npm test`
-- [ ] 2.2 Lint passes: `npm run lint`
-- [ ] 2.3 Build passes: `npx astro sync && npm run build`
+- [x] 2.1 Unit tests pass: `npm test`
+- [x] 2.2 Lint passes: `npm run lint`
+- [x] 2.3 Build passes: `npx astro sync && npm run build`
 
 #### Manual
 
-- [ ] 2.4 `/dashboard` shows the most-recently-practiced exam's trend by default
-- [ ] 2.5 Dropdown switches exams and the line re-renders; exams never blended
-- [ ] 2.6 One-session exam shows a single point + "do more" caption
-- [ ] 2.7 Fresh account sees the empty state linking to `/practice`
-- [ ] 2.8 Caption and `/history` link render correctly
+- [x] 2.4 `/dashboard` shows the most-recently-practiced exam's trend by default
+- [x] 2.5 Dropdown switches exams and the line re-renders; exams never blended
+- [x] 2.6 One-session exam shows a single point + "do more" caption
+- [x] 2.7 Fresh account sees the empty state linking to `/practice`
+- [x] 2.8 Caption and `/history` link render correctly

@@ -69,6 +69,23 @@ export interface TopicScore {
   percentage: number;
 }
 
+/** One point on a per-exam score trend (S-04, FR-010). */
+export interface TrendPoint {
+  /** ISO timestamp of the session (`created_at`). */
+  at: string;
+  percentage: number;
+}
+
+/** A single exam's progress trend, built from that exam's sessions only (never blended). */
+export interface ExamProgress {
+  exam: string;
+  provider: string;
+  /** Trend points ordered oldest → newest. */
+  points: TrendPoint[];
+  /** ISO timestamp of the most recent session for this exam. */
+  latestAt: string;
+}
+
 // === Persistence contract (S-03) ===
 
 /** A raw, ungraded answer as submitted by the client; graded server-side on save. */
