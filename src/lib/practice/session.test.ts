@@ -182,4 +182,25 @@ describe("gradeSubmission (server-authoritative regrade)", () => {
     const result = gradeSubmission(questions, [{ questionId: "nope", selectedOptionId: "a" }]);
     expect(result).toEqual({ ok: false, error: "Unknown questionId: nope" });
   });
+
+  it("returns answers in question order even when submitted out of order (index alignment)", () => {
+    const result = gradeSubmission(questions, [
+      { questionId: "3", selectedOptionId: "c" },
+      { questionId: "1", selectedOptionId: "a" },
+      { questionId: "2", selectedOptionId: "b" },
+    ]);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    // Aligned with `questions` (1,2,3), not the submission order (3,1,2).
+    expect(result.answers.map((a) => a.questionId)).toEqual(["1", "2", "3"]);
+    expect(result.score).toEqual({ correct: 3, total: 3, percentage: 100 });
+  });
+
+  it("fails when a question has no submitted answer", () => {
+    const result = gradeSubmission(questions, [
+      { questionId: "1", selectedOptionId: "a" },
+      { questionId: "2", selectedOptionId: "b" },
+    ]);
+    expect(result).toEqual({ ok: false, error: "Missing answer for questionId: 3" });
+  });
 });

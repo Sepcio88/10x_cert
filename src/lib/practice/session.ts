@@ -96,15 +96,24 @@ export type GradeResult = { ok: true; answers: AnswerRecord[]; score: SessionSco
  * answer references a question id absent from the set.
  */
 export function gradeSubmission(questions: Question[], rawAnswers: RawAnswer[]): GradeResult {
-  const byId = new Map(questions.map((question) => [question.id, question]));
-  const answers: AnswerRecord[] = [];
+  const questionIds = new Set(questions.map((question) => question.id));
+  // Reject any answer that references a question not in the set.
   for (const raw of rawAnswers) {
-    const question = byId.get(raw.questionId);
-    if (question === undefined) {
+    if (!questionIds.has(raw.questionId)) {
       return { ok: false, error: `Unknown questionId: ${raw.questionId}` };
     }
+  }
+  // Build answers by iterating `questions`, so the result is index-aligned with
+  // `questions` by construction — SessionReview pairs them positionally on revisit.
+  const rawById = new Map(rawAnswers.map((raw) => [raw.questionId, raw]));
+  const answers: AnswerRecord[] = [];
+  for (const question of questions) {
+    const raw = rawById.get(question.id);
+    if (raw === undefined) {
+      return { ok: false, error: `Missing answer for questionId: ${question.id}` };
+    }
     answers.push({
-      questionId: raw.questionId,
+      questionId: question.id,
       selectedOptionId: raw.selectedOptionId,
       correct: raw.selectedOptionId === question.correctOptionId,
     });

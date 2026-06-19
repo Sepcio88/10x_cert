@@ -3,10 +3,12 @@ import type { Database } from "@/db/database.types";
 import type { SavedSession, SavedSessionSummary, SessionPayload, SessionScore } from "@/types";
 
 /**
- * Data-access for `practice_sessions` (S-03). Wraps every query in the project's
- * discriminated-result style (mirrors `question-generator.ts`) and isolates rows by
- * `user_id` explicitly as defense-in-depth atop RLS. The row↔DTO mappers are pure and
- * exported so they can be unit-tested without a live client.
+ * Data-access for `practice_sessions` (S-03). Writes (`saveSession`/`deleteSession`)
+ * return discriminated results in the project's style (mirrors `question-generator.ts`);
+ * reads (`listSessions`/`getSession`) degrade to `[]`/`null` on failure — logged, not
+ * surfaced — since the UI treats them as "no data." All queries isolate rows by `user_id`
+ * explicitly as defense-in-depth atop RLS. The row↔DTO mappers are pure and exported so
+ * they can be unit-tested without a live client.
  */
 
 type Client = SupabaseClient<Database>;
@@ -87,6 +89,8 @@ export async function listSessions(client: Client, userId: string): Promise<Save
     .order("created_at", { ascending: false });
 
   if (error) {
+    // eslint-disable-next-line no-console -- surface DB read failures; no logger abstraction yet
+    console.error("listSessions failed:", error.message);
     return [];
   }
   return (data as SummaryRow[]).map(rowToSummary);
@@ -100,7 +104,12 @@ export async function getSession(client: Client, userId: string, id: string): Pr
     .eq("id", id)
     .maybeSingle();
 
-  if (error || !data) {
+  if (error) {
+    // eslint-disable-next-line no-console -- surface DB read failures; no logger abstraction yet
+    console.error("getSession failed:", error.message);
+    return null;
+  }
+  if (!data) {
     return null;
   }
   return rowToSaved(data as unknown as SessionRow);
