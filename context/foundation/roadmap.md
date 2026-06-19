@@ -33,7 +33,7 @@ Cloud developers studying for a certification exam waste time hunting for scatte
 | S-01 | generate-first-practice-set | select a provider, find an exam by code/name, choose a count, and get a generated question set                                | F-01          | US-01, FR-001, FR-002, FR-003, FR-004, FR-005      | done     |
 | S-02 | answer-with-feedback        | answer the set one-by-one with immediate explanation-first feedback and an overall score                                      | S-01          | US-01, FR-006, FR-007, FR-008                      | done     |
 | S-03 | session-persistence-history | finish a session that is saved, and revisit past sessions                                                                     | S-02          | FR-008, FR-009                                     | done     |
-| S-04 | progress-dashboard          | see a per-topic breakdown and a progress trend across sessions                                                                | S-03          | FR-008, FR-010                                     | blocked  |
+| S-04 | progress-dashboard          | see a per-topic breakdown and a progress trend across sessions                                                                | S-03          | FR-008, FR-010                                     | proposed |
 | S-05 | retry-weak-topics           | start a fresh set targeting topics previously answered wrong                                                                  | F-01, S-03    | FR-011                                             | proposed |
 
 ## Streams
@@ -42,7 +42,7 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 
 | Stream | Theme              | Chain                                      | Note                                                                              |
 | ------ | ------------------ | ------------------------------------------ | --------------------------------------------------------------------------------- |
-| A      | Core practice loop | `F-01` → `S-01` → `S-02` → `S-03` → `S-04` | The spine. Riskiest-first per `market-goal`; `S-04` blocked on a metric decision. |
+| A      | Core practice loop | `F-01` → `S-01` → `S-02` → `S-03` → `S-04` | The spine. Riskiest-first per `market-goal`; `S-04` metric decided (per-exam), ready to plan. |
 | B      | Weak-topic retry   | `S-05`                                     | Nice-to-have; runs parallel once `F-01` and `S-03` are done.                      |
 
 ## Baseline
@@ -121,9 +121,9 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Parallel with:** S-05
 - **Blockers:** —
 - **Unknowns:**
-  - How is the progress metric defined across different exams/providers? Averaging raw scores across different exams could mislead. — Owner: user. Block: yes (the aggregation rule must be decided before this slice can be planned coherently).
-- **Risk:** Depends on multiple saved sessions existing (S-03). Blocked until the cross-exam aggregation rule is defined — sequencing it earlier would prejudge a metric the PRD left open.
-- **Status:** blocked
+  - ~~How is the progress metric defined across different exams/providers?~~ RESOLVED (2026-06-19): per-exam aggregation; home page defaults to the most-recent exam's trend with a switcher. See Open Roadmap Questions #2.
+- **Risk:** Depends on multiple saved sessions existing (S-03). Metric decision now settled (per-exam), so the slice is ready to plan.
+- **Status:** proposed
 
 ### S-05: Retry fresh questions on weak topics
 
@@ -146,7 +146,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-01       | generate-first-practice-set | Generate a practice set for a chosen exam (north star)      | no                    | Needs F-01 done first                                               |
 | S-02       | answer-with-feedback        | Answer a set with immediate explanation-first feedback      | no                    | Needs S-01                                                          |
 | S-03       | session-persistence-history | Persist completed sessions and revisit history              | no                    | Needs S-02                                                          |
-| S-04       | progress-dashboard          | Per-topic breakdown + progress dashboard                    | no                    | Blocked: define cross-exam progress metric first                    |
+| S-04       | progress-dashboard          | Per-topic breakdown + progress dashboard                    | yes                   | Metric decided (per-exam, 2026-06-19) — run `/10x-plan progress-dashboard` |
 | S-05       | retry-weak-topics           | Retry fresh questions on weak topics                        | no                    | Nice-to-have; needs F-01 + S-03                                     |
 
 This table is the clean handoff to Jira/Linear or any MCP-backed backlog. One row per `F-NN`/`S-NN`.
@@ -154,7 +154,7 @@ This table is the clean handoff to Jira/Linear or any MCP-backed backlog. One ro
 ## Open Roadmap Questions
 
 1. **What is the maximum question count per session?** — Owner: user. Block: S-01 (no — a sensible default unblocks planning; affects FR-004 and generation cost/latency).
-2. **How is the progress metric defined across different exams/providers?** — Owner: user. Block: S-04 (yes — averaging raw scores across different exams could mislead; the dashboard needs a meaningful aggregation rule).
+2. **How is the progress metric defined across different exams/providers?** — RESOLVED (2026-06-19): **per-exam aggregation** (average only same-exam sessions; home page defaults to the most-recent exam's trend with an exam switcher). Unblocks S-04.
 
 ## Parked
 

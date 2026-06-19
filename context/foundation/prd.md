@@ -163,4 +163,4 @@ gated behind sign-in. No admin or content-author roles in the MVP.
 ## Open Questions
 
 1. **What is the maximum question count per session?** — RESOLVED (2026-06-18): **max 5 for the MVP**. During S-01 verification, 10 questions exceeded the <10s budget (~9s timeout) with a single `gpt-4o-mini` call, so the cap was lowered from 20 to 5 (enforced by `MAX_QUESTION_COUNT`). Raising it again requires a faster model or streaming (F-01 follow-up). (relates to FR-004 / FR-005)
-2. **How is the progress metric defined across different exams/providers?** — Owner: user. Averaging raw scores across different exams could mislead; the dashboard (FR-010) needs a meaningful aggregation rule.
+2. **How is the progress metric defined across different exams/providers?** — RESOLVED (2026-06-19): **per-exam aggregation** — the trend averages only same-exam sessions (never blends different exams/providers), and the home page (FR-010) defaults to the most-recently-practiced exam's trend with an exam switcher. Supported by the S-03 schema (`exam`, `percentage`, `created_at` columns). (relates to FR-010 / S-04)
