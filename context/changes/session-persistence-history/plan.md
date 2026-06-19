@@ -459,29 +459,29 @@ inline error on failure. `history.astro` renders `<HistoryList sessions={…} />
 
 #### Automated
 
-- [x] 1.1 Lint passes: `npm run lint`
-- [x] 1.2 Build passes: `npx astro sync && npm run build`
-- [x] 1.3 Unit tests pass: `npm test`
+- [x] 1.1 Lint passes: `npm run lint` — ba96bbb
+- [x] 1.2 Build passes: `npx astro sync && npm run build` — ba96bbb
+- [x] 1.3 Unit tests pass: `npm test` — ba96bbb
 
 #### Manual
 
-- [x] 1.4 `supabase db push` applies the migration; table + 3 policies visible in dashboard
-- [x] 1.5 `supabase gen types typescript` produces `src/db/database.types.ts` with `practice_sessions`
-- [x] 1.6 RLS check: user A cannot select user B's rows
+- [x] 1.4 `supabase db push` applies the migration; table + 3 policies visible in dashboard — ba96bbb
+- [x] 1.5 `supabase gen types typescript` produces `src/db/database.types.ts` with `practice_sessions` — ba96bbb
+- [x] 1.6 RLS check: user A cannot select user B's rows — ba96bbb
 
 ### Phase 2: Save-on-complete
 
 #### Automated
 
-- [ ] 2.1 Endpoint tests pass: `npm test`
-- [ ] 2.2 Lint passes: `npm run lint`
-- [ ] 2.3 Build passes: `npx astro sync && npm run build`
+- [x] 2.1 Endpoint tests pass: `npm test`
+- [x] 2.2 Lint passes: `npm run lint`
+- [x] 2.3 Build passes: `npx astro sync && npm run build`
 
 #### Manual
 
-- [ ] 2.4 Completing a session inserts a `practice_sessions` row
-- [ ] 2.5 Stored score matches server recompute even with a tampered client flag
-- [ ] 2.6 Failed save keeps results on screen + Retry works
+- [x] 2.4 Completing a session inserts a `practice_sessions` row
+- [x] 2.5 Stored score matches server recompute even with a tampered client flag
+- [x] 2.6 Failed save keeps results on screen + Retry works
 
 ### Phase 3: History list + revisit detail
 

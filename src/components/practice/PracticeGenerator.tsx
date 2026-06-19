@@ -40,6 +40,9 @@ type ApiResponse =
 // Mode machine: form (idle/loading/error) → answering → summary.
 type Status = "idle" | "loading" | "answering" | "summary" | "error";
 
+// Persistence of the completed session (S-03): never silently drop a finished session.
+type SaveStatus = "idle" | "saving" | "saved" | "error";
+
 const inputClass =
   "w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-white placeholder:text-blue-100/40 focus:border-purple-400 focus:outline-none";
 
@@ -53,6 +56,7 @@ export default function PracticeGenerator() {
   const [confidence, setConfidence] = useState<GenerationConfidence>("high");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showReview, setShowReview] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
 
   const loading = status === "loading";
   const canSubmit = !loading && exam.trim() !== "" && count >= MIN_COUNT && count <= MAX_COUNT;
@@ -90,12 +94,40 @@ export default function PracticeGenerator() {
     setSession(submitAnswer(session, selectedOptionId));
   }
 
+  // Persist a completed session. The server recomputes the score; we only send the
+  // questions and raw picks. On failure we keep the summary on screen and expose Retry.
+  async function saveCompletedSession(completed: PracticeSession) {
+    setSaveStatus("saving");
+    try {
+      const res = await fetch("/api/practice/sessions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          provider,
+          exam: exam.trim(),
+          questions: completed.questions,
+          answers: completed.answers.map((a) => ({
+            questionId: a.questionId,
+            selectedOptionId: a.selectedOptionId,
+          })),
+        }),
+      });
+      const data = (await res.json()) as { ok: boolean };
+      setSaveStatus(res.ok && data.ok ? "saved" : "error");
+    } catch {
+      setSaveStatus("error");
+    }
+  }
+
   function handleNext() {
     if (session === null) return;
     const next = advance(session);
     setSession(next);
     setSelectedOptionId(null);
-    if (isComplete(next)) setStatus("summary");
+    if (isComplete(next)) {
+      setStatus("summary");
+      void saveCompletedSession(next);
+    }
   }
 
   function startNewSet() {
@@ -105,6 +137,7 @@ export default function PracticeGenerator() {
     setErrorMessage(null);
     setShowReview(false);
     setConfidence("high");
+    setSaveStatus("idle");
   }
 
   // === Answering mode ===
@@ -163,6 +196,25 @@ export default function PracticeGenerator() {
             {result.correct} / {result.total} correct
           </p>
           <p className="text-blue-100/80">{result.percentage}%</p>
+        </div>
+
+        <div aria-live="polite" className="text-center text-sm">
+          {saveStatus === "saving" && <span className="text-blue-100/70">Saving to your history…</span>}
+          {saveStatus === "saved" && <span className="text-green-300">Saved to your history.</span>}
+          {saveStatus === "error" && (
+            <span className="flex flex-wrap items-center justify-center gap-2 text-amber-200">
+              Couldn&apos;t save this session.
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => void saveCompletedSession(session)}
+                className="flex items-center gap-2 text-white"
+              >
+                <RotateCcw className="size-4" />
+                Retry
+              </Button>
+            </span>
+          )}
         </div>
 
         <div className="flex flex-wrap gap-3">
