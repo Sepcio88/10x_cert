@@ -473,31 +473,31 @@ inline error on failure. `history.astro` renders `<HistoryList sessions={…} />
 
 #### Automated
 
-- [x] 2.1 Endpoint tests pass: `npm test`
-- [x] 2.2 Lint passes: `npm run lint`
-- [x] 2.3 Build passes: `npx astro sync && npm run build`
+- [x] 2.1 Endpoint tests pass: `npm test` — 1921a93
+- [x] 2.2 Lint passes: `npm run lint` — 1921a93
+- [x] 2.3 Build passes: `npx astro sync && npm run build` — 1921a93
 
 #### Manual
 
-- [x] 2.4 Completing a session inserts a `practice_sessions` row
-- [x] 2.5 Stored score matches server recompute even with a tampered client flag
-- [x] 2.6 Failed save keeps results on screen + Retry works
+- [x] 2.4 Completing a session inserts a `practice_sessions` row — 1921a93
+- [x] 2.5 Stored score matches server recompute even with a tampered client flag — 1921a93
+- [x] 2.6 Failed save keeps results on screen + Retry works — 1921a93
 
 ### Phase 3: History list + revisit detail
 
 #### Automated
 
-- [ ] 3.1 Lint passes: `npm run lint`
-- [ ] 3.2 Build passes (both new routes compile): `npx astro sync && npm run build`
-- [ ] 3.3 `npm test` stays green
+- [x] 3.1 Lint passes: `npm run lint`
+- [x] 3.2 Build passes (both new routes compile): `npx astro sync && npm run build`
+- [x] 3.3 `npm test` stays green
 
 #### Manual
 
-- [ ] 3.4 `/history` lists sessions with provider/exam, date, score, count, newest first
-- [ ] 3.5 Fresh user sees the empty state
-- [ ] 3.6 Row opens detail; `SessionReview` shows correctness + explanation-first (FR-009)
-- [ ] 3.7 Signed-out `/history` redirects to `/auth/signin`
-- [ ] 3.8 A second user cannot see/open the first user's sessions (detail URL 404s)
+- [x] 3.4 `/history` lists sessions with provider/exam, date, score, count, newest first
+- [x] 3.5 Fresh user sees the empty state
+- [x] 3.6 Row opens detail; `SessionReview` shows correctness + explanation-first (FR-009)
+- [x] 3.7 Signed-out `/history` redirects to `/auth/signin`
+- [x] 3.8 A second user cannot see/open the first user's sessions (detail URL 404s)
 
 ### Phase 4: Delete a session
 

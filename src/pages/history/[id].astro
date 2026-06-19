@@ -1,0 +1,65 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Topbar from "@/components/Topbar.astro";
+import SavedSessionView from "@/components/practice/SavedSessionView";
+import { createClient } from "@/lib/supabase";
+import { getSession } from "@/lib/db/sessions";
+
+export const prerender = false;
+
+const { user } = Astro.locals;
+const { id } = Astro.params;
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+// RLS + the explicit user_id filter mean another user's id resolves to null here.
+const session = supabase && user && id ? await getSession(supabase, user.id, id) : null;
+
+if (!session) {
+  Astro.response.status = 404;
+}
+
+const when = session
+  ? new Date(session.createdAt).toLocaleString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+  : "";
+---
+
+<Layout title={session ? "Session review" : "Not found"}>
+  <main class="bg-cosmic min-h-screen p-4">
+    <div class="mx-auto max-w-2xl">
+      <Topbar />
+      <div class="rounded-2xl border border-white/10 bg-white/10 p-6 text-white backdrop-blur-xl">
+        <a href="/history" class="text-sm text-purple-300 transition-colors hover:text-purple-100 hover:underline">
+          ← Back to history
+        </a>
+        {
+          session ? (
+            <>
+              <div class="mt-3 mb-6 flex items-end justify-between gap-3">
+                <div class="min-w-0">
+                  <h1 class="truncate text-2xl font-bold text-white">
+                    {session.provider} — {session.exam}
+                  </h1>
+                  <p class="text-sm text-blue-100/60">{when}</p>
+                </div>
+                <div class="shrink-0 text-right">
+                  <p class="text-2xl font-bold text-white">
+                    {session.correct} / {session.total}
+                  </p>
+                  <p class="text-sm text-blue-100/60">{session.percentage}%</p>
+                </div>
+              </div>
+              <SavedSessionView client:load payload={session.payload} />
+            </>
+          ) : (
+            <p class="mt-4 text-blue-100/80">This session doesn't exist or isn't yours.</p>
+          )
+        }
+      </div>
+    </div>
+  </main>
+</Layout>
