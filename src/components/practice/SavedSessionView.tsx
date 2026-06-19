@@ -1,4 +1,5 @@
 import { SessionReview } from "@/components/practice/SessionReview";
+import { TopicBreakdown } from "@/components/practice/TopicBreakdown";
 import type { PracticeSession, SessionPayload } from "@/types";
 
 interface Props {
@@ -17,5 +18,10 @@ export default function SavedSessionView({ payload }: Props) {
     currentIndex: payload.questions.length,
     answers: payload.answers,
   };
-  return <SessionReview session={session} />;
+  return (
+    <div className="space-y-4">
+      <TopicBreakdown session={session} />
+      <SessionReview session={session} />
+    </div>
+  );
 }

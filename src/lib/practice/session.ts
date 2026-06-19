@@ -1,4 +1,4 @@
-import type { AnswerRecord, PracticeSession, Question, RawAnswer, SessionScore } from "@/types";
+import type { AnswerRecord, PracticeSession, Question, RawAnswer, SessionScore, TopicScore } from "@/types";
 
 /**
  * Pure answering-session lifecycle for S-02. No React, no I/O — every function
@@ -120,4 +120,31 @@ export function gradeSubmission(questions: Question[], rawAnswers: RawAnswer[]):
   }
   const completed: PracticeSession = { questions, currentIndex: questions.length, answers };
   return { ok: true, answers, score: score(completed) };
+}
+
+/**
+ * Per-topic/domain breakdown for a session (S-04, FR-008): tally correct/total per topic
+ * from the answers index-aligned with `questions`. Topics are emitted in first-appearance
+ * order of `questions` so the breakdown renders deterministically across summary and revisit.
+ */
+export function topicBreakdown(session: PracticeSession): TopicScore[] {
+  const order: string[] = [];
+  const acc = new Map<string, { correct: number; total: number }>();
+  session.questions.forEach((question, index) => {
+    let bucket = acc.get(question.topic);
+    if (bucket === undefined) {
+      bucket = { correct: 0, total: 0 };
+      acc.set(question.topic, bucket);
+      order.push(question.topic);
+    }
+    bucket.total += 1;
+    if (session.answers[index]?.correct) {
+      bucket.correct += 1;
+    }
+  });
+  return order.map((topic) => {
+    const bucket = acc.get(topic) ?? { correct: 0, total: 0 };
+    const percentage = bucket.total === 0 ? 0 : Math.round((bucket.correct / bucket.total) * 100);
+    return { topic, correct: bucket.correct, total: bucket.total, percentage };
+  });
 }

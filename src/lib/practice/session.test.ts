@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import type { Question } from "@/types";
+import type { PracticeSession, Question } from "@/types";
 import {
   advance,
   answeredCount,
@@ -12,6 +12,7 @@ import {
   isCurrentAnswered,
   score,
   submitAnswer,
+  topicBreakdown,
 } from "@/lib/practice/session";
 
 /** Build a question whose correct option is `correctOptionId` (defaults to "a"). */
@@ -202,5 +203,58 @@ describe("gradeSubmission (server-authoritative regrade)", () => {
       { questionId: "2", selectedOptionId: "b" },
     ]);
     expect(result).toEqual({ ok: false, error: "Missing answer for questionId: 3" });
+  });
+});
+
+describe("topicBreakdown", () => {
+  // Build a complete session from (topic, correct) specs; answers are index-aligned.
+  function sessionFrom(specs: { topic: string; correct: boolean }[]): PracticeSession {
+    const questions = specs.map((spec, i) => ({ ...q(String(i + 1), "a"), topic: spec.topic }));
+    const answers = specs.map((spec, i) => ({
+      questionId: String(i + 1),
+      selectedOptionId: spec.correct ? "a" : "b",
+      correct: spec.correct,
+    }));
+    return { questions, currentIndex: questions.length, answers };
+  }
+
+  it("tallies correct/total per topic and rounds the percentage", () => {
+    const breakdown = topicBreakdown(
+      sessionFrom([
+        { topic: "Compute", correct: true },
+        { topic: "Compute", correct: true },
+        { topic: "Compute", correct: false }, // Compute: 2/3 → 67
+        { topic: "Storage", correct: false }, // Storage: 0/1 → 0
+      ]),
+    );
+    expect(breakdown).toEqual([
+      { topic: "Compute", correct: 2, total: 3, percentage: 67 },
+      { topic: "Storage", correct: 0, total: 1, percentage: 0 },
+    ]);
+  });
+
+  it("emits topics in first-appearance order, not alphabetical", () => {
+    const breakdown = topicBreakdown(
+      sessionFrom([
+        { topic: "Networking", correct: true },
+        { topic: "Compute", correct: true },
+        { topic: "Networking", correct: false },
+      ]),
+    );
+    expect(breakdown.map((r) => r.topic)).toEqual(["Networking", "Compute"]);
+  });
+
+  it("handles a single-topic, all-correct session", () => {
+    const breakdown = topicBreakdown(
+      sessionFrom([
+        { topic: "Compute", correct: true },
+        { topic: "Compute", correct: true },
+      ]),
+    );
+    expect(breakdown).toEqual([{ topic: "Compute", correct: 2, total: 2, percentage: 100 }]);
+  });
+
+  it("returns an empty array for a session with no questions", () => {
+    expect(topicBreakdown({ questions: [], currentIndex: 0, answers: [] })).toEqual([]);
   });
 });

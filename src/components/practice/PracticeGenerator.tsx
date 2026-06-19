@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ServerError } from "@/components/auth/ServerError";
 import { QuestionCard } from "@/components/practice/QuestionCard";
 import { SessionReview } from "@/components/practice/SessionReview";
+import { TopicBreakdown } from "@/components/practice/TopicBreakdown";
 import {
   advance,
   correctCount,
@@ -197,6 +198,8 @@ export default function PracticeGenerator() {
           </p>
           <p className="text-blue-100/80">{result.percentage}%</p>
         </div>
+
+        <TopicBreakdown session={session} />
 
         <div aria-live="polite" className="text-center text-sm">
           {saveStatus === "saving" && <span className="text-blue-100/70">Saving to your history…</span>}

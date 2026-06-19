@@ -61,6 +61,14 @@ export interface SessionScore {
   percentage: number;
 }
 
+/** Per-topic/domain tally within a session (S-04, FR-008). `percentage` rounds to nearest int. */
+export interface TopicScore {
+  topic: string;
+  correct: number;
+  total: number;
+  percentage: number;
+}
+
 // === Persistence contract (S-03) ===
 
 /** A raw, ungraded answer as submitted by the client; graded server-side on save. */
