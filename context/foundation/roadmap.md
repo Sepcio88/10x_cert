@@ -33,7 +33,7 @@ Cloud developers studying for a certification exam waste time hunting for scatte
 | S-01 | generate-first-practice-set | select a provider, find an exam by code/name, choose a count, and get a generated question set                                | F-01          | US-01, FR-001, FR-002, FR-003, FR-004, FR-005      | done     |
 | S-02 | answer-with-feedback        | answer the set one-by-one with immediate explanation-first feedback and an overall score                                      | S-01          | US-01, FR-006, FR-007, FR-008                      | done     |
 | S-03 | session-persistence-history | finish a session that is saved, and revisit past sessions                                                                     | S-02          | FR-008, FR-009                                     | done     |
-| S-04 | progress-dashboard          | see a per-topic breakdown and a progress trend across sessions                                                                | S-03          | FR-008, FR-010                                     | proposed |
+| S-04 | progress-dashboard          | see a per-topic breakdown and a progress trend across sessions                                                                | S-03          | FR-008, FR-010                                     | done     |
 | S-05 | retry-weak-topics           | start a fresh set targeting topics previously answered wrong                                                                  | F-01, S-03    | FR-011                                             | proposed |
 
 ## Streams
@@ -123,7 +123,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:**
   - ~~How is the progress metric defined across different exams/providers?~~ RESOLVED (2026-06-19): per-exam aggregation; home page defaults to the most-recent exam's trend with a switcher. See Open Roadmap Questions #2.
 - **Risk:** Depends on multiple saved sessions existing (S-03). Metric decision now settled (per-exam), so the slice is ready to plan.
-- **Status:** proposed
+- **Status:** done
 
 ### S-05: Retry fresh questions on weak topics
 
@@ -169,3 +169,4 @@ This table is the clean handoff to Jira/Linear or any MCP-backed backlog. One ro
 - **S-01: user can select a cloud provider, find an exam by its code or name, choose how many questions, and get a freshly generated question set for that exam.** — Archived 2026-06-18 → `context/archive/2026-06-18-generate-first-practice-set/`. Lesson: [[lessons.md]] (LLM latency vs output volume; count cap lowered 20→5).
 - **S-02: user can answer the generated questions one at a time, see immediately whether each was correct with an explanation-first rationale and the correct answer, and finish with an overall session score.** — Archived 2026-06-18 → `context/archive/2026-06-18-answer-with-feedback/`. Lesson: —.
 - **S-03: user can complete a session that is saved durably and later revisit past sessions to review their questions and answers.** — Archived 2026-06-19 → `context/archive/2026-06-19-session-persistence-history/`. Lesson: —.
+- **S-04: user can see a per-topic/domain breakdown of a session and a progress trend (average score over time) across all sessions on the home page.** — Archived 2026-06-19 → `context/archive/2026-06-19-progress-dashboard/`. Lesson: known dev-only workerd SSR island error (non-blocking; see archived change.md).
