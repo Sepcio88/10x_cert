@@ -287,14 +287,14 @@ and aggregation is in-memory over a handful of rows. No pagination needed.
 
 #### Automated
 
-- [x] 2.1 Unit tests pass: `npm test`
-- [x] 2.2 Lint passes: `npm run lint`
-- [x] 2.3 Build passes: `npx astro sync && npm run build`
+- [x] 2.1 Unit tests pass: `npm test` — c05a95a
+- [x] 2.2 Lint passes: `npm run lint` — c05a95a
+- [x] 2.3 Build passes: `npx astro sync && npm run build` — c05a95a
 
 #### Manual
 
-- [x] 2.4 `/dashboard` shows the most-recently-practiced exam's trend by default
-- [x] 2.5 Dropdown switches exams and the line re-renders; exams never blended
-- [x] 2.6 One-session exam shows a single point + "do more" caption
-- [x] 2.7 Fresh account sees the empty state linking to `/practice`
-- [x] 2.8 Caption and `/history` link render correctly
+- [x] 2.4 `/dashboard` shows the most-recently-practiced exam's trend by default — c05a95a
+- [x] 2.5 Dropdown switches exams and the line re-renders; exams never blended — c05a95a
+- [x] 2.6 One-session exam shows a single point + "do more" caption — c05a95a
+- [x] 2.7 Fresh account sees the empty state linking to `/practice` — c05a95a
+- [x] 2.8 Caption and `/history` link render correctly — c05a95a
