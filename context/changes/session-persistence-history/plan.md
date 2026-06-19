@@ -503,11 +503,11 @@ inline error on failure. `history.astro` renders `<HistoryList sessions={…} />
 
 #### Automated
 
-- [x] 4.1 Delete endpoint tests pass: `npm test`
-- [x] 4.2 Lint passes: `npm run lint`
-- [x] 4.3 Build passes: `npx astro sync && npm run build`
+- [x] 4.1 Delete endpoint tests pass: `npm test` — 0c83a86
+- [x] 4.2 Lint passes: `npm run lint` — 0c83a86
+- [x] 4.3 Build passes: `npx astro sync && npm run build` — 0c83a86
 
 #### Manual
 
-- [x] 4.4 Delete prompts for confirmation, then removes the row from `/history` and the DB
-- [x] 4.5 A user cannot delete another user's session (RLS no-op)
+- [x] 4.4 Delete prompts for confirmation, then removes the row from `/history` and the DB — 0c83a86
+- [x] 4.5 A user cannot delete another user's session (RLS no-op) — 0c83a86
