@@ -60,3 +60,34 @@ export interface SessionScore {
   total: number;
   percentage: number;
 }
+
+// === Persistence contract (S-03) ===
+
+/** A raw, ungraded answer as submitted by the client; graded server-side on save. */
+export interface RawAnswer {
+  questionId: string;
+  selectedOptionId: string;
+}
+
+/** The full, revisitable session content stored as JSONB. `answers` stays index-aligned with `questions`. */
+export interface SessionPayload {
+  questions: Question[];
+  answers: AnswerRecord[];
+}
+
+/** A saved session as shown in the history list — queryable columns only, no payload. */
+export interface SavedSessionSummary {
+  id: string;
+  provider: string;
+  exam: string;
+  correct: number;
+  total: number;
+  percentage: number;
+  /** ISO timestamp (DB `created_at`). */
+  createdAt: string;
+}
+
+/** A saved session with its full payload, for the revisit detail view. */
+export interface SavedSession extends SavedSessionSummary {
+  payload: SessionPayload;
+}

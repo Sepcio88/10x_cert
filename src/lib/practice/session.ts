@@ -1,4 +1,4 @@
-import type { AnswerRecord, PracticeSession, Question, SessionScore } from "@/types";
+import type { AnswerRecord, PracticeSession, Question, RawAnswer, SessionScore } from "@/types";
 
 /**
  * Pure answering-session lifecycle for S-02. No React, no I/O — every function
@@ -83,4 +83,32 @@ export function advance(session: PracticeSession): PracticeSession {
     return session;
   }
   return { ...session, currentIndex: session.currentIndex + 1 };
+}
+
+/** Server-authoritative grading result for a submitted session (S-03). */
+export type GradeResult = { ok: true; answers: AnswerRecord[]; score: SessionScore } | { ok: false; error: string };
+
+/**
+ * Recompute authoritative answers + score from a raw client submission, ignoring any
+ * client-sent correctness. Each answer's `correct` is derived by matching its
+ * `questionId` to the question's `correctOptionId` — the persisted score must never
+ * trust a client-supplied flag (the product's trust anchor). Returns an error if an
+ * answer references a question id absent from the set.
+ */
+export function gradeSubmission(questions: Question[], rawAnswers: RawAnswer[]): GradeResult {
+  const byId = new Map(questions.map((question) => [question.id, question]));
+  const answers: AnswerRecord[] = [];
+  for (const raw of rawAnswers) {
+    const question = byId.get(raw.questionId);
+    if (question === undefined) {
+      return { ok: false, error: `Unknown questionId: ${raw.questionId}` };
+    }
+    answers.push({
+      questionId: raw.questionId,
+      selectedOptionId: raw.selectedOptionId,
+      correct: raw.selectedOptionId === question.correctOptionId,
+    });
+  }
+  const completed: PracticeSession = { questions, currentIndex: questions.length, answers };
+  return { ok: true, answers, score: score(completed) };
 }

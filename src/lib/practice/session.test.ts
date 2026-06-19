@@ -7,6 +7,7 @@ import {
   createSession,
   currentQuestion,
   getAnswer,
+  gradeSubmission,
   isComplete,
   isCurrentAnswered,
   score,
@@ -139,5 +140,46 @@ describe("score aggregation", () => {
     const s = createSession([]);
     expect(isComplete(s)).toBe(true);
     expect(score(s)).toEqual({ correct: 0, total: 0, percentage: 0 });
+  });
+});
+
+describe("gradeSubmission (server-authoritative regrade)", () => {
+  const questions = [q("1", "a"), q("2", "b"), q("3", "c")];
+
+  it("recomputes correctness from the question set, ignoring any client-sent flag", () => {
+    const result = gradeSubmission(questions, [
+      { questionId: "1", selectedOptionId: "a" }, // correct
+      { questionId: "2", selectedOptionId: "d" }, // wrong
+      { questionId: "3", selectedOptionId: "c" }, // correct
+    ]);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.answers).toEqual([
+      { questionId: "1", selectedOptionId: "a", correct: true },
+      { questionId: "2", selectedOptionId: "d", correct: false },
+      { questionId: "3", selectedOptionId: "c", correct: true },
+    ]);
+    expect(result.score).toEqual({ correct: 2, total: 3, percentage: 67 });
+  });
+
+  it("scores all-correct and all-wrong submissions", () => {
+    const allRight = gradeSubmission(questions, [
+      { questionId: "1", selectedOptionId: "a" },
+      { questionId: "2", selectedOptionId: "b" },
+      { questionId: "3", selectedOptionId: "c" },
+    ]);
+    expect(allRight.ok && allRight.score).toEqual({ correct: 3, total: 3, percentage: 100 });
+
+    const allWrong = gradeSubmission(questions, [
+      { questionId: "1", selectedOptionId: "b" },
+      { questionId: "2", selectedOptionId: "a" },
+      { questionId: "3", selectedOptionId: "a" },
+    ]);
+    expect(allWrong.ok && allWrong.score).toEqual({ correct: 0, total: 3, percentage: 0 });
+  });
+
+  it("fails when an answer references an unknown question id", () => {
+    const result = gradeSubmission(questions, [{ questionId: "nope", selectedOptionId: "a" }]);
+    expect(result).toEqual({ ok: false, error: "Unknown questionId: nope" });
   });
 });
