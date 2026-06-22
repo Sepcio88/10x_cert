@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 
 // Mock the engine so the route test never pulls in astro:env/server.
 const { generateMock } = vi.hoisted(() => ({
-  generateMock: vi.fn<(input: { exam: string; count: number }) => Promise<unknown>>(),
+  generateMock: vi.fn<(input: { exam: string; count: number; topics?: string[] }) => Promise<unknown>>(),
 }));
 
 vi.mock("@/lib/services/question-generator", () => ({

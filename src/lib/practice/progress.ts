@@ -65,14 +65,16 @@ export function weakTopics(payloads: SessionPayload[], threshold = WEAK_TOPIC_TH
       acc.set(ts.topic, { correct: bucket.correct + ts.correct, total: bucket.total + ts.total });
     }
   }
-  const weak: { topic: string; percentage: number }[] = [];
+  // Compare the raw ratio (not a rounded percentage) so a 69.5%→70% rounding boundary
+  // never misclassifies a genuinely sub-threshold topic.
+  const weak: { topic: string; ratio: number }[] = [];
   for (const [topic, { correct, total }] of acc) {
-    const percentage = total === 0 ? 0 : Math.round((correct / total) * 100);
-    if (percentage < threshold) {
-      weak.push({ topic, percentage });
+    const ratio = total === 0 ? 0 : correct / total;
+    if (ratio < threshold / 100) {
+      weak.push({ topic, ratio });
     }
   }
-  weak.sort((a, b) => a.percentage - b.percentage);
+  weak.sort((a, b) => a.ratio - b.ratio);
   return weak.map((w) => w.topic);
 }
 
