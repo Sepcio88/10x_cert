@@ -315,34 +315,34 @@ aggregation is in-memory over a handful of rows. Generation keeps F-01's ≤5-co
 
 #### Manual
 
-- [ ] 1.4 A generate request with `topics` returns questions concentrated on those topics
-- [ ] 1.5 A normal generate request (no `topics`) behaves exactly as before
+- [x] 1.4 A generate request with `topics` returns questions concentrated on those topics — 514b63c
+- [x] 1.5 A normal generate request (no `topics`) behaves exactly as before — 514b63c
 
 ### Phase 2: Weak-topic detection + dashboard retry entry
 
 #### Automated
 
-- [x] 2.1 Unit tests pass: `npm test`
-- [x] 2.2 Lint passes: `npm run lint`
-- [x] 2.3 Build passes: `npx astro sync && npm run build`
+- [x] 2.1 Unit tests pass: `npm test` — 66542bd
+- [x] 2.2 Lint passes: `npm run lint` — 66542bd
+- [x] 2.3 Build passes: `npx astro sync && npm run build` — 66542bd
 
 #### Manual
 
-- [x] 2.4 An exam with a sub-70% topic shows the "Retry weak topics" button
-- [x] 2.5 An all-≥70% exam shows the "no weak topics" note, no button
-- [x] 2.6 The button's URL carries the right exam + weak topics
+- [x] 2.4 An exam with a sub-70% topic shows the "Retry weak topics" button — 66542bd
+- [x] 2.5 An all-≥70% exam shows the "no weak topics" note, no button — 66542bd
+- [x] 2.6 The button's URL carries the right exam + weak topics — 66542bd
 
 ### Phase 3: Retry launch wiring (PracticeGenerator)
 
 #### Automated
 
-- [ ] 3.1 Lint passes: `npm run lint`
-- [ ] 3.2 Build passes: `npx astro sync && npm run build`
-- [ ] 3.3 `npm test` stays green
+- [x] 3.1 Lint passes: `npm run lint`
+- [x] 3.2 Build passes: `npx astro sync && npm run build`
+- [x] 3.3 `npm test` stays green
 
 #### Manual
 
-- [ ] 3.4 Clicking retry opens `/practice` pre-filled and auto-generates a targeted set
-- [ ] 3.5 The generated questions concentrate on the weak topics
-- [ ] 3.6 Answering completes and saves as a normal session (history + dashboard updated)
-- [ ] 3.7 Visiting `/practice` directly (no params) works exactly as before
+- [x] 3.4 Clicking retry opens `/practice` pre-filled and auto-generates a targeted set
+- [x] 3.5 The generated questions concentrate on the weak topics
+- [x] 3.6 Answering completes and saves as a normal session (history + dashboard updated)
+- [x] 3.7 Visiting `/practice` directly (no params) works exactly as before

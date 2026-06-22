@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Sparkles, RotateCcw, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ServerError } from "@/components/auth/ServerError";
@@ -58,18 +58,28 @@ export default function PracticeGenerator() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showReview, setShowReview] = useState(false);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
+  // Target topics for a weak-topic retry launched from the dashboard (S-05); empty for normal sets.
+  const [retryTopics, setRetryTopics] = useState<string[]>([]);
 
   const loading = status === "loading";
   const canSubmit = !loading && exam.trim() !== "" && count >= MIN_COUNT && count <= MAX_COUNT;
 
-  async function generate() {
+  async function generate(override?: { provider?: Provider; exam?: string; topics?: string[] }) {
+    const useProvider = override?.provider ?? provider;
+    const useExam = (override?.exam ?? exam).trim();
+    const useTopics = override?.topics ?? retryTopics;
     setStatus("loading");
     setErrorMessage(null);
     try {
       const res = await fetch("/api/practice/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ provider, exam: exam.trim(), count }),
+        body: JSON.stringify({
+          provider: useProvider,
+          exam: useExam,
+          count,
+          topics: useTopics.length > 0 ? useTopics : undefined,
+        }),
       });
       const data = (await res.json()) as ApiResponse;
       if (res.ok && data.ok) {
@@ -139,7 +149,29 @@ export default function PracticeGenerator() {
     setShowReview(false);
     setConfidence("high");
     setSaveStatus("idle");
+    setRetryTopics([]);
   }
+
+  // Retry launch (S-05): a /practice?provider=&exam=&topics= link pre-fills the form and
+  // auto-starts a targeted generation. Reads the client-only URL post-hydration, so it must
+  // run once in a mount effect with setState — a pattern React Compiler rejects; opted out here.
+  /* eslint-disable react-hooks/set-state-in-effect, react-hooks/exhaustive-deps -- one-shot client-only URL read on mount */
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const p = params.get("provider");
+    const e = params.get("exam");
+    if (!p || !e || !(PROVIDERS as readonly string[]).includes(p)) return;
+    const prov = p as Provider;
+    const topics = (params.get("topics") ?? "")
+      .split(",")
+      .map((t) => t.trim())
+      .filter((t) => t.length > 0);
+    setProvider(prov);
+    setExam(e);
+    setRetryTopics(topics);
+    void generate({ provider: prov, exam: e, topics });
+  }, []);
+  /* eslint-enable react-hooks/set-state-in-effect, react-hooks/exhaustive-deps */
 
   // === Answering mode ===
   if (status === "answering" && session !== null) {
@@ -159,6 +191,12 @@ export default function PracticeGenerator() {
           <p className="rounded-lg border border-amber-500/30 bg-amber-900/30 px-3 py-2 text-sm text-amber-200">
             These questions may be less accurate — the exam wasn&apos;t clearly recognized. Double-check the exam code
             or name.
+          </p>
+        )}
+
+        {retryTopics.length > 0 && (
+          <p className="rounded-lg border border-purple-400/30 bg-purple-900/20 px-3 py-2 text-sm text-purple-100">
+            Retrying weak topics: {retryTopics.join(", ")}
           </p>
         )}
 
