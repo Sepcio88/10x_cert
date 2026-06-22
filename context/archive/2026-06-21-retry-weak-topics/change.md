@@ -2,9 +2,9 @@
 change_id: retry-weak-topics
 title: Retry fresh questions on weak topics (S-05)
 created: 2026-06-21
-status: impl_reviewed
+status: archived
 updated: 2026-06-22
-archived_at: null
+archived_at: 2026-06-22T14:35:41Z
 ---
 
 ## Notes

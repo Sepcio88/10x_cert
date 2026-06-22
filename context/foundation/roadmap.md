@@ -3,7 +3,7 @@ project: "CloudExamMatter"
 version: 1
 status: draft
 created: 2026-06-17
-updated: 2026-06-19
+updated: 2026-06-22
 prd_version: 1
 main_goal: market-feedback
 top_blocker: time
@@ -34,7 +34,7 @@ Cloud developers studying for a certification exam waste time hunting for scatte
 | S-02 | answer-with-feedback        | answer the set one-by-one with immediate explanation-first feedback and an overall score                                      | S-01          | US-01, FR-006, FR-007, FR-008                      | done     |
 | S-03 | session-persistence-history | finish a session that is saved, and revisit past sessions                                                                     | S-02          | FR-008, FR-009                                     | done     |
 | S-04 | progress-dashboard          | see a per-topic breakdown and a progress trend across sessions                                                                | S-03          | FR-008, FR-010                                     | done     |
-| S-05 | retry-weak-topics           | start a fresh set targeting topics previously answered wrong                                                                  | F-01, S-03    | FR-011                                             | proposed |
+| S-05 | retry-weak-topics           | start a fresh set targeting topics previously answered wrong                                                                  | F-01, S-03    | FR-011                                             | done     |
 
 ## Streams
 
@@ -136,7 +136,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:**
   - How are "weak topics" identified from past results (threshold, recency window)? — Owner: user. Block: no.
 - **Risk:** Nice-to-have (PRD priority). Re-uses F-01's generation for fresh questions (not identical replay) and needs per-topic result data from S-03. Deferrable under `top_blocker: time` without losing the core loop.
-- **Status:** proposed
+- **Status:** done
 
 ## Backlog Handoff
 
@@ -170,3 +170,4 @@ This table is the clean handoff to Jira/Linear or any MCP-backed backlog. One ro
 - **S-02: user can answer the generated questions one at a time, see immediately whether each was correct with an explanation-first rationale and the correct answer, and finish with an overall session score.** — Archived 2026-06-18 → `context/archive/2026-06-18-answer-with-feedback/`. Lesson: —.
 - **S-03: user can complete a session that is saved durably and later revisit past sessions to review their questions and answers.** — Archived 2026-06-19 → `context/archive/2026-06-19-session-persistence-history/`. Lesson: —.
 - **S-04: user can see a per-topic/domain breakdown of a session and a progress trend (average score over time) across all sessions on the home page.** — Archived 2026-06-19 → `context/archive/2026-06-19-progress-dashboard/`. Lesson: known dev-only workerd SSR island error (non-blocking; see archived change.md).
+- **S-05: user can start a new session of freshly generated questions targeting the topics they previously answered incorrectly.** — Archived 2026-06-22 → `context/archive/2026-06-21-retry-weak-topics/`. Lesson: —.
