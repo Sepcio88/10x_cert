@@ -336,13 +336,13 @@ aggregation is in-memory over a handful of rows. Generation keeps F-01's ≤5-co
 
 #### Automated
 
-- [x] 3.1 Lint passes: `npm run lint`
-- [x] 3.2 Build passes: `npx astro sync && npm run build`
-- [x] 3.3 `npm test` stays green
+- [x] 3.1 Lint passes: `npm run lint` — 0261d43
+- [x] 3.2 Build passes: `npx astro sync && npm run build` — 0261d43
+- [x] 3.3 `npm test` stays green — 0261d43
 
 #### Manual
 
-- [x] 3.4 Clicking retry opens `/practice` pre-filled and auto-generates a targeted set
-- [x] 3.5 The generated questions concentrate on the weak topics
-- [x] 3.6 Answering completes and saves as a normal session (history + dashboard updated)
-- [x] 3.7 Visiting `/practice` directly (no params) works exactly as before
+- [x] 3.4 Clicking retry opens `/practice` pre-filled and auto-generates a targeted set — 0261d43
+- [x] 3.5 The generated questions concentrate on the weak topics — 0261d43
+- [x] 3.6 Answering completes and saves as a normal session (history + dashboard updated) — 0261d43
+- [x] 3.7 Visiting `/practice` directly (no params) works exactly as before — 0261d43
