@@ -9,6 +9,8 @@ const requestSchema = z.object({
   provider: z.enum(["AWS", "Azure", "GCP"]),
   exam: z.string().trim().min(1),
   count: z.number().int().min(MIN_QUESTION_COUNT).max(MAX_QUESTION_COUNT),
+  /** Optional weak-topic targeting (S-05): focus generation on these domains. */
+  topics: z.array(z.string().min(1)).optional(),
 });
 
 function json(body: unknown, status: number): Response {
@@ -49,8 +51,8 @@ export const POST: APIRoute = async (context) => {
     );
   }
 
-  const { provider, exam, count } = parsed.data;
-  const result = await generateQuestions({ exam: `${provider} ${exam}`, count });
+  const { provider, exam, count, topics } = parsed.data;
+  const result = await generateQuestions({ exam: `${provider} ${exam}`, count, topics });
 
   return json(result, result.ok ? 200 : 400);
 };

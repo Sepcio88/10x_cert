@@ -12,6 +12,8 @@ export interface GenerateQuestionsInput {
   exam: string;
   /** Number of questions to generate (1..MAX_QUESTION_COUNT). */
   count: number;
+  /** Optional topics/domains to focus the questions on (S-05 weak-topic retry). */
+  topics?: string[];
 }
 
 export type GenerationErrorCode = "invalid-count" | "not-configured" | "invalid-output" | "provider-error";

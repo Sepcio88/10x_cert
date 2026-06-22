@@ -73,6 +73,18 @@ describe("POST /api/practice/generate", () => {
     expect(data.ok).toBe(true);
   });
 
+  it("forwards optional target topics to the engine (S-05)", async () => {
+    const res = await POST(ctx({ user: { id: "u1" }, body: { ...validBody, topics: ["Networking", "Security"] } }));
+    expect(generateMock).toHaveBeenCalledWith({ exam: "AWS SAA-C03", count: 5, topics: ["Networking", "Security"] });
+    expect(res.status).toBe(200);
+  });
+
+  it("rejects a non-string topic without calling the engine", async () => {
+    const res = await POST(ctx({ user: { id: "u1" }, body: { ...validBody, topics: [123] } }));
+    expect(res.status).toBe(400);
+    expect(generateMock).not.toHaveBeenCalled();
+  });
+
   it("surfaces an engine error result as a 400 with the typed error", async () => {
     generateMock.mockResolvedValue({ ok: false, error: { code: "provider-error", message: "boom" } });
     const res = await POST(ctx({ user: { id: "u1" }, body: validBody }));

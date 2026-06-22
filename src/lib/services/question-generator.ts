@@ -8,7 +8,7 @@ const TEMPERATURE = 0.2;
 /** One initial attempt + one retry on parse/validation failure. */
 const MAX_ATTEMPTS = 2;
 
-function buildMessages(exam: string, count: number): ChatMessage[] {
+function buildMessages(exam: string, count: number, topics?: string[]): ChatMessage[] {
   const system = [
     "You are an expert author of practice questions for cloud certification exams.",
     "Generate multiple-choice questions representative of the named exam, grounded in that exam's official knowledge domains.",
@@ -19,9 +19,17 @@ function buildMessages(exam: string, count: number): ChatMessage[] {
     "Respond with ONLY valid JSON — no markdown fences, no commentary.",
   ].join(" ");
 
+  const focus =
+    topics && topics.length > 0
+      ? [
+          `Focus every question on these specific topics/domains, spreading the ${count} question(s) across them: ${topics.join(", ")}.`,
+        ]
+      : [];
+
   const user = [
     `Exam: ${exam}`,
     `Number of questions: ${count}`,
+    ...focus,
     "Return JSON of exactly this shape:",
     '{"questions":[{"id":"q1","stem":"...","options":[{"id":"a","text":"..."},{"id":"b","text":"..."},{"id":"c","text":"..."},{"id":"d","text":"..."}],"correctOptionId":"a","explanation":"...","topic":"..."}],"confidence":"high"}',
     `Generate exactly ${count} question(s).`,
@@ -47,7 +55,7 @@ function extractJson(text: string): string {
  * or network failures yield `provider-error`.
  */
 export async function generateQuestions(input: GenerateQuestionsInput): Promise<GenerationResult> {
-  const { exam, count } = input;
+  const { exam, count, topics } = input;
 
   if (!Number.isInteger(count) || count < MIN_QUESTION_COUNT || count > MAX_QUESTION_COUNT) {
     return {
@@ -67,7 +75,7 @@ export async function generateQuestions(input: GenerateQuestionsInput): Promise<
     };
   }
 
-  const messages = buildMessages(exam, count);
+  const messages = buildMessages(exam, count, topics);
   let lastIssue = "";
 
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {

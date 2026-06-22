@@ -134,4 +134,37 @@ describe("generateQuestions", () => {
     expect(result.ok).toBe(true);
     if (result.ok) expect(result.questions).toHaveLength(1);
   });
+
+  /** Pull the user message content from the single recorded chat call. */
+  function userPrompt(): string {
+    const call = chatMock.mock.calls[0][0] as { messages: { role: string; content: string }[] };
+    return call.messages.find((m) => m.role === "user")?.content ?? "";
+  }
+
+  it("focuses the prompt on the target topics when provided (S-05)", async () => {
+    chatMock.mockResolvedValueOnce(validResponse(2));
+
+    await generateQuestions({ exam: "AWS SAA-C03", count: 2, topics: ["Networking", "Security"] });
+
+    const prompt = userPrompt();
+    expect(prompt).toContain("Networking");
+    expect(prompt).toContain("Security");
+    expect(prompt).toContain("Focus every question");
+  });
+
+  it("omits the topic-focus instruction when no topics are given", async () => {
+    chatMock.mockResolvedValueOnce(validResponse(1));
+
+    await generateQuestions({ exam: "AWS SAA-C03", count: 1 });
+
+    expect(userPrompt()).not.toContain("Focus every question");
+  });
+
+  it("omits the topic-focus instruction for an empty topics array", async () => {
+    chatMock.mockResolvedValueOnce(validResponse(1));
+
+    await generateQuestions({ exam: "AWS SAA-C03", count: 1, topics: [] });
+
+    expect(userPrompt()).not.toContain("Focus every question");
+  });
 });
