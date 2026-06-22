@@ -3,14 +3,27 @@ import Layout from "@/layouts/Layout.astro";
 import Topbar from "@/components/Topbar.astro";
 import ProgressDashboard from "@/components/dashboard/ProgressDashboard";
 import { createClient } from "@/lib/supabase";
-import { listSessions } from "@/lib/db/sessions";
+import { listSessionsFull } from "@/lib/db/sessions";
+import { weakTopicsByExam } from "@/lib/practice/progress";
 
 export const prerender = false;
 
 const { user } = Astro.locals;
 const supabase = createClient(Astro.request.headers, Astro.cookies);
 // Middleware guards /dashboard, so `user` is present; guard anyway for types/config.
-const sessions = supabase && user ? await listSessions(supabase, user.id) : [];
+// Weak topics need full payloads; compute the map server-side and strip payloads before
+// handing summaries to the client island (payloads never reach the browser).
+const fullSessions = supabase && user ? await listSessionsFull(supabase, user.id) : [];
+const weakByExam = weakTopicsByExam(fullSessions);
+const sessions = fullSessions.map((s) => ({
+  id: s.id,
+  provider: s.provider,
+  exam: s.exam,
+  correct: s.correct,
+  total: s.total,
+  percentage: s.percentage,
+  createdAt: s.createdAt,
+}));
 ---
 
 <Layout title="Dashboard">
@@ -22,7 +35,7 @@ const sessions = supabase && user ? await listSessions(supabase, user.id) : [];
           Your progress
         </h1>
         <p class="mb-6 text-sm text-blue-100/70">Your score over time for each exam you've practiced.</p>
-        <ProgressDashboard sessions={sessions} client:load />
+        <ProgressDashboard sessions={sessions} weakTopicsByExam={weakByExam} client:load />
       </div>
     </div>
   </main>

@@ -309,9 +309,9 @@ aggregation is in-memory over a handful of rows. Generation keeps F-01's ≤5-co
 
 #### Automated
 
-- [x] 1.1 Unit tests pass: `npm test`
-- [x] 1.2 Lint passes: `npm run lint`
-- [x] 1.3 Build passes: `npx astro sync && npm run build`
+- [x] 1.1 Unit tests pass: `npm test` — 514b63c
+- [x] 1.2 Lint passes: `npm run lint` — 514b63c
+- [x] 1.3 Build passes: `npx astro sync && npm run build` — 514b63c
 
 #### Manual
 
@@ -322,15 +322,15 @@ aggregation is in-memory over a handful of rows. Generation keeps F-01's ≤5-co
 
 #### Automated
 
-- [ ] 2.1 Unit tests pass: `npm test`
-- [ ] 2.2 Lint passes: `npm run lint`
-- [ ] 2.3 Build passes: `npx astro sync && npm run build`
+- [x] 2.1 Unit tests pass: `npm test`
+- [x] 2.2 Lint passes: `npm run lint`
+- [x] 2.3 Build passes: `npx astro sync && npm run build`
 
 #### Manual
 
-- [ ] 2.4 An exam with a sub-70% topic shows the "Retry weak topics" button
-- [ ] 2.5 An all-≥70% exam shows the "no weak topics" note, no button
-- [ ] 2.6 The button's URL carries the right exam + weak topics
+- [x] 2.4 An exam with a sub-70% topic shows the "Retry weak topics" button
+- [x] 2.5 An all-≥70% exam shows the "no weak topics" note, no button
+- [x] 2.6 The button's URL carries the right exam + weak topics
 
 ### Phase 3: Retry launch wiring (PracticeGenerator)
 

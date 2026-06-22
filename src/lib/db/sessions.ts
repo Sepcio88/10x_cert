@@ -96,6 +96,21 @@ export async function listSessions(client: Client, userId: string): Promise<Save
   return (data as SummaryRow[]).map(rowToSummary);
 }
 
+export async function listSessionsFull(client: Client, userId: string): Promise<SavedSession[]> {
+  const { data, error } = await client
+    .from("practice_sessions")
+    .select(FULL_COLUMNS)
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    // eslint-disable-next-line no-console -- surface DB read failures; no logger abstraction yet
+    console.error("listSessionsFull failed:", error.message);
+    return [];
+  }
+  return (data as unknown as SessionRow[]).map(rowToSaved);
+}
+
 export async function getSession(client: Client, userId: string, id: string): Promise<SavedSession | null> {
   const { data, error } = await client
     .from("practice_sessions")

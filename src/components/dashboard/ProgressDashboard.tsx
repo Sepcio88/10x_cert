@@ -4,6 +4,8 @@ import type { SavedSessionSummary } from "@/types";
 
 interface Props {
   sessions: SavedSessionSummary[];
+  /** Weak topics (sub-threshold, all-time) per exam; exams with none are absent (S-05). */
+  weakTopicsByExam: Record<string, string[]>;
 }
 
 // SVG viewBox geometry. y-axis is FIXED to 0–100% (never auto-scaled) so small score
@@ -27,7 +29,7 @@ function yFor(percentage: number): number {
  * practiced exam with a dropdown switcher. Exams are never blended. Handles single-point and
  * zero-session cases honestly.
  */
-export default function ProgressDashboard({ sessions }: Props) {
+export default function ProgressDashboard({ sessions, weakTopicsByExam }: Props) {
   const groups = useMemo(() => groupByExam(sessions), [sessions]);
   const [selectedExam, setSelectedExam] = useState<string | null>(() => mostRecentExam(groups));
 
@@ -49,6 +51,10 @@ export default function ProgressDashboard({ sessions }: Props) {
   const points = selected.points;
   const latest = points[points.length - 1];
   const single = points.length === 1;
+  const weak = weakTopicsByExam[selected.exam] ?? [];
+  const retryHref = `/practice?provider=${encodeURIComponent(selected.provider)}&exam=${encodeURIComponent(
+    selected.exam,
+  )}&topics=${encodeURIComponent(weak.join(","))}`;
 
   const coords = points.map((p, i) => ({
     x: PAD + (single ? INNER_W / 2 : (i / (points.length - 1)) * INNER_W),
@@ -115,6 +121,17 @@ export default function ProgressDashboard({ sessions }: Props) {
           View all sessions
         </a>
       </div>
+
+      {weak.length > 0 ? (
+        <a
+          href={retryHref}
+          className="inline-flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-purple-500"
+        >
+          Retry weak topics ({weak.length})
+        </a>
+      ) : (
+        <p className="text-sm text-blue-100/60">No weak topics for this exam yet — nice work.</p>
+      )}
 
       {single && <p className="text-sm text-blue-100/60">Complete more sessions on this exam to see a trend.</p>}
     </div>
