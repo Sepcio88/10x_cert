@@ -24,6 +24,49 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
 
+  # E2E: Playwright key-flow test against the dev server. Separate job so the
+  # (slower, LLM-calling) E2E doesn't block the unit gate; runs only after `ci`
+  # is green to avoid spending generation calls on an already-broken build.
+  e2e:
+    name: E2E (Playwright)
+    needs: ci
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run test:e2e:install
+      # The dev server (astro dev) reads runtime secrets from .dev.vars, and
+      # playwright.config.ts loads the same file so the auth setup/teardown see
+      # SUPABASE_URL / service-role key. Recreate it from GitHub secrets.
+      - name: Write .dev.vars from secrets
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          {
+            printf 'SUPABASE_URL=%s\n' "$SUPABASE_URL"
+            printf 'SUPABASE_KEY=%s\n' "$SUPABASE_KEY"
+            printf 'SUPABASE_SERVICE_ROLE_KEY=%s\n' "$SUPABASE_SERVICE_ROLE_KEY"
+            printf 'OPENROUTER_API_KEY=%s\n' "$OPENROUTER_API_KEY"
+          } > .dev.vars
+      - name: Run Playwright E2E
+        run: npm run test:e2e
+      - name: Clean up .dev.vars
+        if: ${{ always() }}
+        run: rm -f .dev.vars
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
   # CD: deploy to Cloudflare Workers only after lint→test→build is green,
   # and only on a direct push to main (never on PRs).
   deploy:

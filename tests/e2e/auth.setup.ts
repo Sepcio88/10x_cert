@@ -53,8 +53,7 @@ setup("create test user and capture storageState", async ({ page }) => {
     email_confirm: true,
   });
   if (createError) throw new Error(`admin.createUser failed: ${createError.message}`);
-  const userId = created.user?.id;
-  if (!userId) throw new Error("admin.createUser returned no user id");
+  const userId = created.user.id;
 
   // Persist credentials + id so the teardown can delete the user later.
   // The file is gitignored via .gitignore's `playwright/.auth/*.json` rule.
