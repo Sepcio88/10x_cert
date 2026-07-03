@@ -30,6 +30,10 @@ jobs:
   e2e:
     name: E2E (Playwright)
     needs: ci
+    # Dependabot (and forks) can't read repo secrets, so E2E can't create its
+    # test user or boot the app there — skip it rather than fail spuriously.
+    # lint/test/build in `ci` still validate the dependency bump.
+    if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
