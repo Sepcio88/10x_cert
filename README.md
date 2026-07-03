@@ -1,174 +1,126 @@
-# 10x Astro Starter
+# CloudExamMatter
 
-![](./public/template.png)
+**A developer studying for a cloud certification picks an exam and how many questions they want, and CloudExamMatter generates fresh, exam-representative questions on demand — grading each answer with an explanation-first rationale and tracking their score trend across sessions.**
 
-A modern, opinionated starter template for building fast, accessible web applications.
+🌐 **Live demo:** https://cloud-exam-matter.sepielak-marcin.workers.dev
 
-## Tech Stack
+Instead of memorizing a static question bank, every practice set is generated on the fly for the exam you choose (AWS / Azure / GCP), so the material is always fresh — paired with _why_ each correct answer is correct and a private, revisitable record of your progress.
 
-- [Astro](https://astro.build/) v6 - Modern web framework with server-first rendering
-- [React](https://react.dev/) v19 - UI library for interactive components
-- [TypeScript](https://www.typescriptlang.org/) v5 - Type-safe JavaScript
-- [Tailwind CSS](https://tailwindcss.com/) v4 - Utility-first CSS framework
-- [Supabase](https://supabase.com/) - Authentication and backend-as-a-service
-- [Cloudflare Workers](https://workers.cloudflare.com/) - Edge deployment runtime
+---
 
-## Prerequisites
+## What it does
 
-- Node.js v22.14.0 (as specified in `.nvmrc`)
-- npm (comes with Node.js)
+- **Sign in** with email/password (or OAuth) — each user's sessions and scores are private to their account.
+- **Generate a set**: pick a provider, find an exam by code or name (e.g. `SAA-C03`), choose 1–5 questions.
+- **Answer one at a time** with immediate, **explanation-first** feedback (the reasoning leads, the correct answer follows).
+- **Finish with a saved session**: an overall score plus a per-topic breakdown you can revisit any time.
+- **Track progress**: a per-exam score trend on your dashboard, and a one-click retry of the topics you got wrong.
 
-## Getting Started
+## Tech stack
 
-1. Clone the repository:
+| Layer         | Choice                                                                            |
+| ------------- | --------------------------------------------------------------------------------- |
+| Framework     | [Astro 6](https://astro.build/) (SSR, `output: "server"`) + [React 19](https://react.dev/) islands |
+| Language      | TypeScript 5                                                                       |
+| Styling       | Tailwind CSS 4                                                                     |
+| Auth & data   | [Supabase](https://supabase.com/) — Postgres + Auth, row-level security per user   |
+| Generation    | [OpenRouter](https://openrouter.ai/) (`openai/gpt-4o-mini`), on-demand            |
+| Runtime       | [Cloudflare Workers](https://workers.cloudflare.com/) (`workerd`) via `@astrojs/cloudflare` |
+| CI/CD         | GitHub Actions — lint → test → build, Playwright E2E, auto-deploy on merge to `main` |
+
+## Getting started
+
+**Prerequisites:** Node.js `22.14.0` (see `.nvmrc`), npm, a Supabase project, and an OpenRouter API key.
 
 ```bash
-git clone https://github.com/przeprogramowani/10x-astro-starter.git
-cd 10x-astro-starter
-```
-
-2. Install dependencies:
-
-```bash
+git clone https://github.com/Sepcio88/10x_cert.git
+cd 10x_cert
 npm install
 ```
 
-3. Set up Supabase and configure environment variables — see [Supabase Configuration](#supabase-configuration) below.
-
-4. Create a `.dev.vars` file for local Cloudflare dev secrets:
+Create a `.dev.vars` file (gitignored) with your runtime secrets — the dev server and build read them here:
 
 ```bash
-cp .env.example .dev.vars
-```
-
-5. Run the development server:
-
-```bash
-npm run dev
-```
-
-## Available Scripts
-
-- `npm run dev` - Start development server (Cloudflare workerd runtime)
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint with type-checked rules
-- `npm run lint:fix` - Auto-fix ESLint issues
-- `npm run format` - Run Prettier
-
-## Project Structure
-
-```md
-.
-├── src/
-│ ├── layouts/ # Astro layouts
-│ ├── pages/ # Astro pages
-│ │ └── api/ # API endpoints
-│ ├── components/ # UI components (Astro & React)
-│ └── assets/ # Static assets
-├── public/ # Public assets
-├── wrangler.jsonc # Cloudflare Workers config
-```
-
-## Supabase Configuration
-
-This project uses [Supabase](https://supabase.com/) for authentication. Environment variables are declared via Astro's `astro:env` schema and are treated as **server-only secrets** — they are never exposed to the client.
-
-### First-time setup (local, no cloud project needed)
-
-Requires [Docker](https://www.docker.com/) and ~7 GB RAM.
-
-1. Create your `.env` file:
-
-```bash
-cp .env.example .env
-```
-
-2. Initialize the local Supabase project (creates a `supabase/` config folder):
-
-```bash
-npx supabase init
-```
-
-3. Start the local stack (downloads Docker images on first run):
-
-```bash
-npx supabase start
-```
-
-4. Copy the credentials printed by the CLI into your `.env` and `.dev.vars`:
-
-```
-SUPABASE_URL=http://127.0.0.1:54321
-SUPABASE_KEY=<anon key from CLI output>
-```
-
-5. To stop the stack when done:
-
-```bash
-npx supabase stop
-```
-
-The local Studio UI is available at `http://localhost:54323`.
-
-No database tables or migrations are required — this project uses Supabase Auth's built-in `auth.users` table only.
-
-### Using a cloud Supabase project instead
-
-If you prefer to use a hosted Supabase project, add these variables to your `.env` and `.dev.vars` files:
-
-| Variable       | Description                                                |
-| -------------- | ---------------------------------------------------------- |
-| `SUPABASE_URL` | Project URL from Supabase dashboard → Settings → API       |
-| `SUPABASE_KEY` | `anon` public key from Supabase dashboard → Settings → API |
-
-```
+# .dev.vars
 SUPABASE_URL=https://<project-ref>.supabase.co
-SUPABASE_KEY=<anon-key>
+SUPABASE_KEY=<supabase anon / publishable key>
+OPENROUTER_API_KEY=<your OpenRouter key>
 ```
 
-### Email confirmation in local development
+Apply the database schema (the `practice_sessions` table + RLS policies) to your Supabase project:
 
-By default Supabase requires email confirmation before a user can sign in. To skip this during local development:
+```bash
+npx supabase db push        # or run supabase/migrations/*.sql in the SQL editor
+```
 
-1. Open the Supabase dashboard for your project
-2. Go to **Authentication → Email → Confirm email**
-3. Toggle it **off**
+Start the dev server (Cloudflare `workerd` runtime, reads `.dev.vars`):
 
-Users can then sign in immediately after sign-up without clicking a confirmation link.
+```bash
+npm run dev                 # http://localhost:4321
+```
 
-### Auth routes
+> Secrets are declared via Astro's `astro:env` schema as **server-only** — they never reach the browser. On Cloudflare they resolve per-request, so read them inside request handlers, not at module scope.
 
-| Route                 | Description                                                             |
-| --------------------- | ----------------------------------------------------------------------- |
-| `/auth/signin`        | Email/password sign-in form                                             |
-| `/auth/signup`        | Email/password sign-up form                                             |
-| `/auth/confirm-email` | Post-signup "check your inbox" page                                     |
-| `/dashboard`          | Example protected page (redirects to `/auth/signin` if unauthenticated) |
+## Scripts
 
-Route protection is handled in `src/middleware.ts`. Add paths to the `PROTECTED_ROUTES` array there to require authentication.
+| Script                     | What it does                                              |
+| -------------------------- | -------------------------------------------------------- |
+| `npm run dev`              | Dev server on `workerd` (loads `.dev.vars`)              |
+| `npm run build`            | Production build (`@astrojs/cloudflare`)                 |
+| `npm run preview`          | Preview the production build                             |
+| `npm run lint`             | ESLint (type-checked)                                    |
+| `npm run test`             | Unit tests (Vitest)                                      |
+| `npm run test:e2e`         | End-to-end tests (Playwright)                            |
+| `npm run test:e2e:install` | Install the Chromium browser for Playwright             |
+
+### End-to-end tests
+
+The E2E suite drives the key flow — **generate → answer with feedback → progress update** — against the dev server, following [`.claude/rules/e2e.md`](.claude/rules/e2e.md) (role/label locators, `storageState` auth, condition-based waits). It provisions a pre-confirmed test user via the Supabase **admin API** and deletes it in teardown, so it needs one extra secret in `.dev.vars`:
+
+```bash
+SUPABASE_SERVICE_ROLE_KEY=<supabase service_role key>   # server-only; E2E setup/teardown only
+```
+
+Then:
+
+```bash
+npm run test:e2e:install    # one-time
+npm run test:e2e
+```
+
+## Architecture
+
+- **Rendering** — Astro renders server-first on Cloudflare Workers; only the interactive pieces (the practice generator, the progress dashboard) hydrate as React islands.
+- **Auth & routing** — `src/middleware.ts` reads the Supabase session per request and gates `PROTECTED_ROUTES` (`/practice`, `/dashboard`, `/history`), redirecting anonymous users to `/auth/signin`.
+- **Generation** — `POST /api/practice/generate` calls OpenRouter with the chosen exam/count, validates the model output against a Zod schema, and returns a typed question set (capped at 5/session to stay within the ~10s budget).
+- **Persistence** — completed sessions are saved to the `practice_sessions` table; row-level security ensures each user can read only their own. The server recomputes the score on save (never trusting the client).
+- **Progress** — the dashboard aggregates a user's sessions per exam into a score-over-time trend and surfaces weak topics for targeted retries.
+
+```
+src/
+├── pages/            # Astro routes
+│   ├── api/          #   REST endpoints (auth, practice generate/sessions)
+│   ├── auth/         #   sign-in / sign-up / confirm-email
+│   ├── practice.astro, dashboard.astro, history/
+│   └── index.astro
+├── components/        # Astro + React (auth, practice, dashboard, ui)
+├── lib/               # domain logic (practice/, services/ [OpenRouter], db/)
+├── middleware.ts      # per-request auth + route protection
+└── db/                # Supabase types
+supabase/migrations/   # practice_sessions table + RLS
+wrangler.jsonc         # Cloudflare Workers config
+.github/workflows/     # CI: lint→test→build, E2E, deploy
+```
 
 ## Deployment
 
-This project deploys to [Cloudflare Workers](https://workers.cloudflare.com/).
+Deployed to **Cloudflare Workers** and shipped automatically: on every push to `main`, GitHub Actions runs lint → test → build, and on green it deploys via `wrangler` and syncs the runtime secrets to the Worker. See [`context/foundation/infrastructure.md`](context/foundation/infrastructure.md) for the platform decision and rationale.
 
-1. Build the project:
-
-```bash
-npm run build
-```
-
-2. Deploy with Wrangler:
+Manual deploy (needs `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID`):
 
 ```bash
-npx wrangler deploy
+npm run build && npx wrangler deploy
 ```
-
-Set `SUPABASE_URL` and `SUPABASE_KEY` as secrets in your Cloudflare dashboard or via `npx wrangler secret put`.
-
-## CI
-
-GitHub Actions runs lint + build on every push and PR to `master`. Configure `SUPABASE_URL` and `SUPABASE_KEY` as repository secrets in GitHub for the build step.
 
 ## License
 
