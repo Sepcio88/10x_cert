@@ -1,0 +1,83 @@
+name: AI Code Review
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    name: AI Code Review
+    # Dependabot PRs can't read repo secrets (same constraint the `e2e` job
+    # in ci.yml already works around), so ANTHROPIC_API_KEY wouldn't be
+    # available — skip rather than fail spuriously.
+    if: github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full history — needed to diff against the PR base
+
+      - name: Ensure review labels exist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create "ai-cr:passed" --color 2ea44f --force
+          gh label create "ai-cr:failed" --color d73a4a --force
+
+      - name: Claude Code Review
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          claude_args: |
+            --allowedTools "Bash(gh pr comment:*),Bash(gh pr edit:*),Bash(gh pr diff:*),Bash(gh pr view:*)"
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+
+            You are reviewing this pull request for CloudExamMatter (Astro 6
+            SSR + React 19 islands + Supabase + Cloudflare Workers). Read
+            the PR diff with `gh pr diff`. Score it 1-10 on each of these 5
+            criteria (1 = worst, 10 = best) — these are this repo's own
+            conventions, not generic advice:
+
+            1. Trust-boundary correctness — every external input is
+               zod-validated at the API boundary; authoritative/computed
+               values (score, ownership, correctness) are derived
+               server-side only, never re-trusted from a client-echoed
+               payload.
+            2. Convention adherence — AGENTS.md hard rules: API routes
+               export `const prerender = false`; new Supabase tables have
+               RLS with granular per-operation policies; Tailwind classes
+               merge via the `cn()` helper; React is used only for
+               interactive UI (Astro for static content); no
+               client-exposed secrets; Conventional Commits.
+            3. Test coverage — new/changed logic has Vitest unit coverage;
+               user-facing flows have Playwright E2E coverage using
+               role/label/text locators only (no CSS/XPath selectors, no
+               `waitForTimeout`), per .claude/rules/e2e.md.
+            4. Type safety — no new `as unknown as` / `as any` casts
+               without an inline comment justifying why; prefers a zod
+               schema (with the type derived via `z.infer`) over a
+               hand-written interface for externally-sourced or persisted
+               data shapes.
+            5. Scope & readability — the diff matches its stated PR intent,
+               is proportional in size/complexity to the problem, doesn't
+               bundle unrelated changes, and is understandable without the
+               author present.
+
+            Post exactly ONE PR comment via `gh pr comment` containing: a
+            one-line summary verdict, a table with all 5 scores, and 2-4
+            sentences on the most important findings (cite file:line for
+            anything structural — don't assert a claim you can't point to
+            in the diff). Then apply exactly one label via
+            `gh pr edit --add-label`: `ai-cr:failed` if ANY criterion
+            scores <= 3 OR the average of the 5 scores is < 6, otherwise
+            `ai-cr:passed`.
