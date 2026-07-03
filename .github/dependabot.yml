@@ -1,0 +1,20 @@
+version: 2
+updates:
+  # npm dependencies — surfaces security advisories (incl. the astro cluster)
+  # as PRs so upgrades are reviewable rather than only visible on manual audit.
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      # Batch the major astro upgrade (astro + adapters) into one reviewable PR.
+      astro:
+        patterns:
+          - "astro"
+          - "@astrojs/*"
+  # Keep GitHub Actions pinned actions current.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
