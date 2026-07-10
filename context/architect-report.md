@@ -1,149 +1,165 @@
 ---
-title: "10xArchitect certification report — Module 4"
+title: "Raport certyfikacyjny 10xArchitect — Moduł 4"
 created: 2026-07-03
 ---
 
-# Module 4 architectural report — CloudExamMatter
+# Raport architektoniczny modułu 4 — CloudExamMatter
 
-## 1. Described projects
+## 1. Opisane projekty
 
-One repository for all four artifacts: **CloudExamMatter**
-(`Sepcio88/10x_cert`, commit `c2273a4`) — Astro 6 (SSR) + React 19 islands,
+Jedno repozytorium dla wszystkich czterech artefaktów: **CloudExamMatter**
+(`Sepcio88/10x_cert`, commit `c2273a4`) — Astro 6 (SSR) + wyspy React 19,
 TypeScript 5, Supabase (Postgres/Auth/RLS), Cloudflare Workers, OpenRouter
-(`gpt-4o-mini`) for on-demand cloud-certification practice questions. Scale:
-solo developer, 46 commits, 2.5 weeks old (2026-06-18 → 2026-07-03), ~55
-`src/` modules. L2 → `context/map/`. L3/L4 → `context/changes/practice-flow-analysis/`. L5 → `context/domain/`.
+(`gpt-4o-mini`) do generowania na żądanie pytań przygotowujących do
+certyfikatów chmurowych. Skala: jeden developer, 46 commitów, projekt ma 2,5
+tygodnia (2026-06-18 → 2026-07-03), ~55 modułów w `src/`. L2 →
+`context/map/`. L3/L4 → `context/changes/practice-flow-analysis/`. L5 →
+`context/domain/`.
 
-## 2. Project map (L2)
+## 2. Mapa projektu (L2)
 
-Full artifact: `context/map/repo-map.md` (+ 3 source artifacts: territory, structure, contributors).
+Pełny artefakt: `context/map/repo-map.md` (+ 3 artefakty źródłowe: teren, struktura, kontrybutorzy).
 
-- **Shared kernel risk**: `src/types.ts` has 15 incoming dependencies (Ca=15,
-  I=0.06) — the single highest-blast-radius file in the repo.
-- **Clean layering, zero cycles**: dependency-cruiser over all 55 modules
-  found no circular imports; the instability gradient runs cleanly from
-  `types.ts`/`utils.ts` (I≈0) through the service/db layer (I≈0.3–0.6) to
-  pages/components/middleware (I=1.0) — nothing in `lib/**` imports from
-  `components/**` or `pages/**`.
-- **Local center**: the practice-generation-and-grading flow
-  (`PracticeGenerator.tsx`, `types.ts`, `question-generator.ts`) is the
-  hottest code by git churn — this is why it was chosen for L3.
-- **CI/CD is actively engineered, not incidental**: `.github/workflows/ci.yml`
-  is the 2nd-most-churned file in the repo (7 commits) — relevant context for
-  the M5 Champion track.
-- **Unknown/limitation**: 2.5 weeks of history is too short to call anything
-  "legacy" yet — churn/coupling numbers are directional, and the
-  single-author signal answers "how does this person work," not "who owns
-  what" (no bus factor to map).
+- **Ryzyko wspólnego rdzenia**: `src/types.ts` ma 15 przychodzących zależności
+  (Ca=15, I=0.06) — to pojedynczy plik o największym promieniu rażenia w
+  repozytorium.
+- **Czysta warstwowość, zero cykli**: dependency-cruiser na wszystkich 55
+  modułach nie znalazł żadnych cyklicznych importów; gradient niestabilności
+  przebiega czysto od `types.ts`/`utils.ts` (I≈0) przez warstwę
+  service/db (I≈0,3–0,6) aż po pages/components/middleware (I=1,0) — nic w
+  `lib/**` nie importuje z `components/**` ani `pages/**`.
+- **Lokalne centrum**: przepływ generowania i oceniania sesji ćwiczeniowej
+  (`PracticeGenerator.tsx`, `types.ts`, `question-generator.ts`) to
+  najgoręcej zmieniany kod wg historii gita — dlatego został wybrany do L3.
+- **CI/CD jest aktywnie rozwijane, nie przypadkowe**: `.github/workflows/ci.yml`
+  to 2. najczęściej zmieniany plik w repozytorium (7 commitów) — istotny
+  kontekst dla ścieżki 10xChampion (moduł 5).
+- **Niewiadoma/ograniczenie**: 2,5 tygodnia historii to za mało, żeby cokolwiek
+  nazwać "legacy" — liczby dot. churnu/sprzężenia mają charakter kierunkowy, a
+  sygnał "jeden autor" odpowiada na pytanie "jak ta osoba pracuje", a nie "kto
+  czym się opiekuje" (nie ma tu czynnika bus factor do zmapowania).
 
-## 3. Feature analysis (L3)
+## 3. Analiza ficzera (L3)
 
-Full artifact: `context/changes/practice-flow-analysis/research.md`.
+Pełny artefakt: `context/changes/practice-flow-analysis/research.md`.
 
-**Flow analyzed**: exam/count selection → question generation (OpenRouter) →
-answer with explanation-first feedback → session save → dashboard/history
-read-back. Chosen because the repo map (§2) flags it as both the hottest
-code path and the one touching the `types.ts` risk zone most (11 of its 15
-import sites).
+**Zbadany przepływ**: wybór egzaminu/liczby pytań → generowanie pytań
+(OpenRouter) → odpowiadanie z feedbackiem explanation-first → zapis sesji →
+odczyt w dashboardzie/historii. Wybrany, bo mapa repo (§2) wskazuje go
+zarówno jako najgorętszą ścieżkę kodu, jak i tę, która najmocniej dotyka
+strefy ryzyka `types.ts` (11 z 15 miejsc importu).
 
-**Feature overview**: input arrives as a validated HTTP request (provider,
-exam, count); state changes twice — once when OpenRouter returns a
-`Question[]` validated against a zod schema, once when the client posts a
-completed session back for a server-side regrade; the response is a saved,
-scored, revisitable session row that feeds the per-exam progress trend.
+**Przegląd ficzera**: wejście przychodzi jako zwalidowane żądanie HTTP
+(provider, exam, count); stan zmienia się dwukrotnie — raz, gdy OpenRouter
+zwraca `Question[]` zwalidowane schematem zod, drugi raz, gdy klient
+wysyła ukończoną sesję do przeliczenia wyniku po stronie serwera; odpowiedzią
+jest zapisany, oceniony, możliwy do ponownego odwiedzenia wiersz sesji, który
+zasila trend postępu dla danego egzaminu.
 
-**Technical debt** (top 3, one ast-grep-confirmed):
-1. **Unvalidated DB read boundary** — `src/lib/db/sessions.ts` casts
-   Supabase's untyped JSONB `payload` straight to app types with no
-   `zod.safeParse`. Confirmed structurally: `ast-grep -p '$X as unknown as $Y' src/lib/db/sessions.ts` → exactly 3 matches (lines 73, 111, 130), matching
-   the claim precisely. Every *other* boundary in this flow validates
-   (LLM output, client-submitted answers) — this is the one that doesn't.
-2. **`database.types.ts` drifts silently** — synced by a human running
-   `supabase gen types` manually; no script, no CI check; the process is
-   documented only in an *archived* plan.
-3. **`openrouter.ts` has zero direct test coverage** — all generation tests
-   mock at the client-factory boundary, so the actual HTTP error/timeout
-   translation is unexercised.
+**Dług techniczny** (top 3, jeden potwierdzony przez ast-grep):
+1. **Niezwalidowana granica odczytu z bazy** — `src/lib/db/sessions.ts` rzutuje
+   nietypowany JSONB `payload` z Supabase wprost na typy aplikacji, bez
+   `zod.safeParse`. Potwierdzone strukturalnie: `ast-grep -p '$X as unknown as $Y' src/lib/db/sessions.ts` → dokładnie 3 trafienia (linie 73, 111, 130),
+   zgodnie z twierdzeniem. Każda *inna* granica w tym przepływie waliduje dane
+   (odpowiedź LLM-a, odpowiedzi od klienta) — to jedyna, która tego nie robi.
+2. **`database.types.ts` cicho się rozjeżdża** — synchronizowany ręcznie przez
+   człowieka uruchamiającego `supabase gen types`; brak skryptu, brak
+   sprawdzenia w CI; proces jest udokumentowany wyłącznie w
+   *zarchiwizowanym* planie.
+3. **`openrouter.ts` nie ma żadnego bezpośredniego pokrycia testami** —
+   wszystkie testy generowania mockują na granicy fabryki klienta, więc
+   faktyczne tłumaczenie błędów HTTP/timeoutów nigdy nie jest ćwiczone.
 
-## 4. Refactor plan (L4)
+## 4. Plan refaktoryzacji (L4)
 
-Full artifacts: `context/changes/practice-flow-analysis/plan.md` + `plan-brief.md`.
+Pełne artefakty: `context/changes/practice-flow-analysis/plan.md` + `plan-brief.md`.
 
-**What's being refactored**: the two debt items above that are genuine
-*shape* problems (not test gaps) — (A) add a zod schema for the session
-payload and validate at all three DB read call sites, dropping+logging any
-row that fails; (B) add an `npm run db:types` script and a hard-failing CI
-job that diffs regenerated types against the committed file.
+**Co jest refaktoryzowane**: dwie pozycje długu powyżej, które są prawdziwymi
+problemami *kształtu* (nie lukami testowymi) — (A) dodanie schematu zod dla
+payloadu sesji i walidacja we wszystkich trzech miejscach odczytu z bazy, z
+odrzucaniem+logowaniem każdego wiersza, który nie przejdzie walidacji; (B)
+dodanie skryptu `npm run db:types` oraz twardo failującego joba CI, który
+porównuje wygenerowane na nowo typy z plikiem zacommitowanym w repo.
 
-**Explicitly NOT doing**: touching `saveSession`'s write-side cast (already
-validated one layer up), adding a logging abstraction, a UI banner for
-dropped sessions, RLS integration tests, or reconciling any *current* drift
-(only one migration exists — none expected).
+**Świadomie NIE robimy**: nie ruszamy rzutowania po stronie zapisu w
+`saveSession` (już zwalidowane warstwę wyżej), nie dodajemy abstrakcji do
+logowania, nie robimy banera UI dla odrzuconych sesji, nie piszemy testów
+integracyjnych RLS, nie naprawiamy żadnego *obecnego* rozjazdu (istnieje
+tylko jedna migracja — nie oczekujemy żadnego).
 
-**Phases** (both single-phase, additive, fully reversible):
-1. Validate the DB read boundary — auto: typecheck/lint/unit tests + new
-   malformed-row tests; manual: SQL-editor-inserted bad row degrades
-   gracefully, happy path unaffected.
-2. Automated `database.types.ts` drift check — auto: `db:types` script
-   output matches committed file, new CI job passes on a clean PR; manual:
-   provision a `SUPABASE_ACCESS_TOKEN` secret (human-only step), confirm a
-   drift-simulating PR fails then passes once reverted.
+**Fazy** (obie jednofazowe, addytywne, w pełni odwracalne):
+1. Walidacja granicy odczytu z bazy — auto: typecheck/lint/testy jednostkowe +
+   nowe testy na zniekształcone wiersze; ręcznie: wiersz wstawiony ręcznie
+   przez edytor SQL z błędnym kształtem degraduje się łagodnie, happy path
+   bez zmian.
+2. Automatyczne sprawdzenie rozjazdu `database.types.ts` — auto: wynik
+   skryptu `db:types` zgadza się z zacommitowanym plikiem, nowy job CI
+   przechodzi na czystym PR-ze; ręcznie: dostarczenie sekretu
+   `SUPABASE_ACCESS_TOKEN` (krok wyłącznie dla człowieka), potwierdzenie, że
+   PR symulujący rozjazd faili, a po cofnięciu zmiany przechodzi.
 
-## 5. Domain, per DDD (L5)
+## 5. Domena wg DDD (L5)
 
-Full artifacts: `context/domain/01-domain-distillation.md`,
+Pełne artefakty: `context/domain/01-domain-distillation.md`,
 `02-invariant-aggregate-refactor.md`, `03-anti-corruption-layer.md`.
 
-**Ubiquitous language** (of 17 terms extracted): `Practice session`,
-`Question`, `Grading`, `Saved session`, `Weak topic` are load-bearing and
-map cleanly to code. Two notable **MISSING in code** terms: `Exam` has no
-entity/catalog at all — it's a bare, unvalidated string threaded straight
-into the LLM prompt — and the PRD's guardrail language never anticipated a
-`GenerationConfidence` concept the code independently grew.
+**Ubiquitous language** (z 17 wyciągniętych pojęć): `Practice session`,
+`Question`, `Grading`, `Saved session`, `Weak topic` są kluczowe i mapują się
+czysto na kod. Dwa istotne pojęcia oznaczone jako **BRAK w kodzie**: `Exam`
+w ogóle nie ma bytu/katalogu — to goły, niewalidowany string wrzucany wprost
+do promptu LLM-a — a język Guardrails z PRD nigdy nie przewidział pojęcia
+`GenerationConfidence`, które kod wykształcił niezależnie.
 
-**Sharpest model-vs-code drift**: the PRD names a Guardrail —
+**Najostrzejszy rozjazd model-kod**: PRD nazywa Guardrail —
 *"Once a session is saved, it remains retrievable — saved sessions are
-never lost"* (`prd.md:58`) — that a complete, unit-tested delete path
-directly contradicts (RLS delete policy + `DELETE` route + a UI trash
-button, `sessions/[id].test.ts:45` asserting the delete *works*). Because
-the test suite certifies the contradiction as correct behavior, this will
-never surface as a CI failure.
+never lost"* (`prd.md:58`) — który wprost przeczy kompletnej, otestowanej
+ścieżce usuwania (polityka RLS na DELETE + route `DELETE` + przycisk-kosz w
+UI, `sessions/[id].test.ts:45` potwierdzający, że usuwanie *działa*). Ponieważ
+zestaw testów certyfikuje tę sprzeczność jako poprawne zachowanie, nigdy nie
+wypłynie ona jako błąd CI.
 
-**Invariant #1 and its aggregate**: the chosen invariant is *not* the
-literal "answer accuracy" guardrail (unenforceable — no code can check LLM
-truthfulness) but its enforceable decomposition: **session content and
-score must be server-authoritative.** Diagnosis found this declared true in
-four places (code comments, README, tests, and my own L3 research above)
-and false in fact — `POST /api/practice/sessions` accepts the *entire*
-question array, including `correctOptionId`, straight from the client, and
-grades against that same untrusted data. Any signed-in user can forge a
-perfect score. The proposed guardian aggregate, `PracticeAttempt`, mints
-identity at generation time and retains questions server-side, so
-completion can only grade against data the server itself produced.
+**Niezmiennik #1 i jego agregat**: wybrany niezmiennik to *nie* dosłowny
+guardrail "poprawność odpowiedzi" (niemożliwy do wyegzekwowania — żaden kod
+nie sprawdzi prawdziwości twierdzenia LLM-a), tylko jego egzekwowalna
+dekompozycja: **treść i wynik sesji muszą być autorytatywnie serwerowe.**
+Diagnoza pokazała, że jest to zadeklarowane jako prawda w czterech miejscach
+(komentarze w kodzie, README, testy oraz mój własny research L3 powyżej), a w
+rzeczywistości jest fałszem — `POST /api/practice/sessions` przyjmuje *całą*
+tablicę pytań, wraz z `correctOptionId`, wprost od klienta, i ocenia względem
+tych samych niezaufanych danych. Każdy zalogowany użytkownik może sfałszować
+perfekcyjny wynik. Proponowany agregat-strażnik, `PracticeAttempt`, nadaje
+tożsamość w momencie generowania i zatrzymuje pytania po stronie serwera, więc
+ukończenie sesji może być ocenione wyłącznie względem danych, które sam
+serwer wytworzył.
 
-**Anti-Corruption Layer**: the worst leak is not the LLM client (already a
-narrow, single-caller port) but `@supabase/supabase-js` — its raw client is
-constructed identically at 9 call sites across 4 layers (ast-grep +
-grep-confirmed count: 6 `.ts` sites via `ast-grep -p 'createClient($$$ARGS)'`
-+ 3 `.astro` sites), and its vendor `User` type is baked into the global
-`App.Locals` contract. The design introduces an `AuthGateway` and a
-`SessionsRepository` port/adapter pair, composed once in middleware.
+**Anti-Corruption Layer**: najgorszym przeciekiem nie jest klient LLM-a (już
+jest wąskim portem z jednym wywołującym), tylko `@supabase/supabase-js` —
+jego surowy klient jest konstruowany identycznie w 9 miejscach w 4 warstwach
+(liczba potwierdzona przez ast-grep + grep: 6 miejsc `.ts` przez
+`ast-grep -p 'createClient($$$ARGS)'` + 3 miejsca `.astro`), a jego
+wendorowy typ `User` jest zaszyty w globalnym kontrakcie `App.Locals`.
+Projekt wprowadza parę port/adapter `AuthGateway` i `SessionsRepository`,
+składaną raz w middleware.
 
-## 6. Decisions that are mine
+## 6. Decyzje, które należą do mnie
 
-I picked the practice-generation flow for L3 because the repo map's own
-churn data pointed there, not because it looked easiest. For the L4 plan I
-deliberately scoped out the write-side cast in `db/sessions.ts` — it's
-already validated upstream, and touching it would have blurred the
-boundary with the L5 aggregate work, which owns that route more
-fundamentally. The DB-read-validation gap (L4) and the client-forged-score
-gap (L5, INV-1) look similar at a glance; I kept them as separate plans
-because L4 only guards against accidental data drift, while L5's finding is
-an adversarial-input gap no amount of read-side validation would catch —
-conflating them would have undersold the second one. The single highest-
-value finding this cycle produced — that "server-authoritative grading" is
-false for the *content* being graded, not just the correctness flag — was
-missed by my own L3 research pass; I'm keeping that failure visible here
-rather than quietly fixing the earlier document, because it's the clearest
-evidence for why the L5 pass earns its place in this pipeline instead of
-being redundant with L3/L4.
+Wybrałem przepływ generowania sesji do L3, bo tak wskazywały dane
+o churnie z mapy repozytorium — nie dlatego, że wydawał się najłatwiejszy.
+
+W planie L4 celowo wyciąłem rzutowanie po stronie zapisu w `db/sessions.ts` ze
+scope'u. Dane są już walidowane warstwę wyżej, więc nie ma po co tego dotykać —
+a przy okazji grzebanie tam zamazałoby granicę z pracą z L5, bo to właśnie L5
+odpowiada za ten route w sposób bardziej fundamentalny, przez agregat.
+
+Luka w walidacji odczytu z bazy (L4) i luka pozwalająca klientowi sfałszować
+wynik (L5, INV-1) na pierwszy rzut oka wyglądają podobnie, ale świadomie
+zostawiłem je jako osobne plany. L4 chroni tylko przed przypadkowym rozjazdem
+danych — to defensywa na nieumyślne błędy. Odkrycie z L5 to coś innego: luka
+na nieautryzowane wejscie, której żadna ilość walidacji po stronie odczytu nie złapie.
+Wrzucenie tego do jednego worka umniejszyłoby wagę tej drugiej sprawy.
+
+Najważniejsze odkrycie całego cyklu — że "autorytatywne ocenianie po stronie
+serwera" jest nieprawdziwe dla treści ocenianej, nie tylko dla flagi
+poprawności — przegapiłem sam w trakcie researchu L3. Zostawiam ten fakt tutaj
+wprost. To najlepszy dowód na
+to, że L5 ma rację bytu w tym procesie i nie jest zwykłym powtórzeniem L3/L4.
