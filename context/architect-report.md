@@ -139,7 +139,7 @@ jego surowy klient jest konstruowany identycznie w 9 miejscach w 4 warstwach
 `ast-grep -p 'createClient($$$ARGS)'` + 3 miejsca `.astro`), a jego
 wendorowy typ `User` jest zaszyty w globalnym kontrakcie `App.Locals`.
 Projekt wprowadza parę port/adapter `AuthGateway` i `SessionsRepository`,
-składaną raz w middleware..
+składaną raz w middleware.
 
 ## 6. Decyzje, które należą do mnie
 
